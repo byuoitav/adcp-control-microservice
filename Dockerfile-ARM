@@ -11,8 +11,8 @@ ADD . /go
 
 WORKDIR /go
 
-CMD ["/go/pjlink-microservice"]
+CMD ["/go/adcp-control-microservice"]
 
-EXPOSE 8005
+EXPOSE 8012
 
 RUN [ "cross-build-end" ]

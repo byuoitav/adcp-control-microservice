@@ -5,10 +5,10 @@
         "Key": ".dockercfg"
     },
     "Image": {
-        "Name": "byuoitav/pjlink-microservice:<TAG>",
+        "Name": "byuoitav/adcp-control-microservice:<TAG>",
         "Update": "true"
     },
     "Ports": [{
-        "ContainerPort": "8005"
+        "ContainerPort": "8012"
     }]
 }

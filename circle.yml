@@ -15,14 +15,14 @@ deployment:
         branch: master
         commands:
             - env GOOS=linux GOARCH=arm go build -v .
-            - docker build -f Dockerfile-ARM -t byuoitav/rpi-pjlink-microservice:$CIRCLE_SHA1 .
-            - docker build -f Dockerfile-ARM -t byuoitav/rpi-pjlink-microservice:latest .
-            - docker build -t byuoitav/pjlink-microservice:$CIRCLE_SHA1 .
-            - docker build -t byuoitav/pjlink-microservice:latest .
+            - docker build -f Dockerfile-ARM -t byuoitav/rpi-adcp-control-microservice:$CIRCLE_SHA1 .
+            - docker build -f Dockerfile-ARM -t byuoitav/rpi-adcp-control-microservice:latest .
+            - docker build -t byuoitav/adcp-control-microservice:$CIRCLE_SHA1 .
+            - docker build -t byuoitav/adcp-control-microservice:latest .
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            - docker push byuoitav/pjlink-microservice:$CIRCLE_SHA1
-            - docker push byuoitav/pjlink-microservice:latest
-            - docker push byuoitav/rpi-pjlink-microservice:$CIRCLE_SHA1
-            - docker push byuoitav/rpi-pjlink-microservice:latest
+            - docker push byuoitav/adcp-control-microservice:$CIRCLE_SHA1
+            - docker push byuoitav/adcp-control-microservice:latest
+            - docker push byuoitav/rpi-adcp-control-microservice:$CIRCLE_SHA1
+            - docker push byuoitav/rpi-adcp-control-microservice:latest
             - ./deploy.sh $CIRCLE_PROJECT_REPONAME $CIRCLE_SHA1
             - ./deploy-pi.sh

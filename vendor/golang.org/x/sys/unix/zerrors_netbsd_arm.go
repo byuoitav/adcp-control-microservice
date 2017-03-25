@@ -378,7 +378,7 @@ const (
 	ETHERTYPE_HAYES                   = 0x8130
 	ETHERTYPE_HIPPI_FP                = 0x8180
 	ETHERTYPE_HITACHI                 = 0x8820
-	ETHERTYPE_HP                      = 0x8005
+	ETHERTYPE_HP                      = 0x8012
 	ETHERTYPE_IEEEPUP                 = 0xa00
 	ETHERTYPE_IEEEPUPAT               = 0xa01
 	ETHERTYPE_IMLBL                   = 0x4c42

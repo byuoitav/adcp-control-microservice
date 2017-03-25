@@ -9,7 +9,7 @@
         }
     },
     "host": "api.byu.edu:443",
-    "basePath": "/byuoitav-pjlink-microservice/0.1",
+    "basePath": "/byuoitav-adcp-control-microservice/0.1",
     "schemes": [
         "https"
     ],
