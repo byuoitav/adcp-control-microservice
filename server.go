@@ -24,7 +24,7 @@ func main() {
 	router.GET("/", echo.WrapHandler(http.HandlerFunc(hateoas.RootResponse)))
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
-	secure.GET("/:address/volume/set/:value", handlers.SetVolume)
+	secure.GET("/:address/volume/set/:level", handlers.SetVolume)
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,
