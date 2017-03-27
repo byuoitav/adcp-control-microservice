@@ -25,6 +25,8 @@ func main() {
 	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
 	secure.GET("/:address/volume/set/:level", handlers.SetVolume)
+	secure.GET("/:address/power/on", handlers.PowerOn)
+	secure.GET("/:address/power/standby", handlers.PowerStandby)
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,
