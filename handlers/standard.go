@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/byuoitav/adcp-control-microservice/helpers"
 	"github.com/labstack/echo"
@@ -23,6 +24,30 @@ func SetVolume(context echo.Context) error {
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-
 	return context.JSON(http.StatusOK, "ok")
+}
+
+func PowerOn(context echo.Context) error {
+	address := context.Param("address")
+
+	err := helpers.PowerOn(address)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	time.Sleep(3 * time.Second)
+	return context.JSON(http.StatusOK, "ok")
+
+}
+
+func PowerStandby(context echo.Context) error {
+	address := context.Param("address")
+
+	err := helpers.PowerStandby(address)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	time.Sleep(2 * time.Second)
+	return context.JSON(http.StatusOK, "ok")
+
 }
