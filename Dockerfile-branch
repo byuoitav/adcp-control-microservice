@@ -9,7 +9,6 @@ RUN mkdir -p /go/src/github.com/byuoitav
 ADD . /go/src/github.com/byuoitav/adcp-control-microservice
 
 WORKDIR /go/src/github.com/byuoitav/adcp-control-microservice
-RUN gvt fetch -branch ${GITHUB_BRANCH} github.com/byuoitav/configuration-database-microservice
 RUN go get -d -v
 RUN go install -v
 
