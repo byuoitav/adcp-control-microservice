@@ -5,7 +5,7 @@
         "Key": ".dockercfg"
     },
     "Image": {
-        "Name": "byuoitav/adcp-control-microservice:<TAG>",
+        "Name": "byuoitav/adcp-control-microservice:latest",
         "Update": "true"
     },
     "Ports": [{
