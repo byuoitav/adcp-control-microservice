@@ -51,3 +51,27 @@ func PowerStandby(context echo.Context) error {
 	return context.JSON(http.StatusOK, "ok")
 
 }
+
+func VolumeLevel(context echo.Context) error {
+
+	address := context.Param("address")
+
+	level, err := helpers.GetVolumeLevel(address)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, level)
+}
+
+func PowerStatus(context echo.Context) error {
+
+	address := context.Param("address")
+
+	status, err := helpers.GetPowerStatus(address)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, status)
+}

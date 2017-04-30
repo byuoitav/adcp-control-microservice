@@ -27,6 +27,11 @@ func main() {
 	secure.GET("/:address/volume/set/:level", handlers.SetVolume)
 	secure.GET("/:address/power/on", handlers.PowerOn)
 	secure.GET("/:address/power/standby", handlers.PowerStandby)
+
+	//status endpoints
+	secure.GET("/:address/volume/level", handlers.VolumeLevel)
+	secure.GET("/:address/power/status", handlers.PowerStatus)
+
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,

@@ -28,7 +28,7 @@ func getConnection(address string) (*net.TCPConn, error) {
 }
 
 func sendCommand(command string, address string) error {
-	log.Printf("Sending Command %s", command)
+	log.Printf("Sending command %s", command)
 
 	command = command + "\r\n"
 
@@ -64,6 +64,39 @@ func sendCommand(command string, address string) error {
 	err = errors.New(fmt.Sprintf("Invalid response recieved: %s", resp))
 	log.Printf("%s", err.Error())
 	return err
+}
+
+func queryState(command string, address string) ([]byte, error) {
+
+	log.Printf("Sending command %s", command)
+
+	command = command + "\r\n"
+
+	connection, err := getConnection(address)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer connection.Close()
+
+	_, err = readUntil('\n', connection, 3)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("Error reading first response on connect %s", err.Error()))
+		log.Printf("%s", err.Error())
+		return []byte{}, err
+	}
+
+	_, err = connection.Write([]byte(command))
+	if err != nil {
+		err = errors.New(fmt.Sprintf("Error sending command : %s", err.Error()))
+		return []byte{}, err
+	}
+
+	resp, err := readUntil('\n', connection, 10)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return resp, nil
 }
 
 func readUntil(delimeter byte, conn *net.TCPConn, timeoutInSeconds int) ([]byte, error) {
