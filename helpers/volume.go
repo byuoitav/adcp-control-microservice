@@ -82,6 +82,5 @@ func GetMuteStatus(address string) (Mute, error){
 	fields := strings.Fields(response)
 	reg := regexp.MustCompile(`"([^"]*)"`)
     res := reg.ReplaceAllString(fields[0], "${1}")
-    fmt.Printf(res)
 	return Mute{Mute: res}, nil
 }
