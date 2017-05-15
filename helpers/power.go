@@ -3,6 +3,8 @@ package helpers
 import (
 	"log"
 	"strings"
+
+	"github.com/byuoitav/av-api/status"
 )
 
 func PowerOn(address string) error {
@@ -20,34 +22,30 @@ func PowerStandby(address string) error {
 	return sendCommand(command, address)
 }
 
-type Power struct {
-	Power string `json:"status"`
-}
-
-func GetPowerStatus(address string) (Power, error) {
+func GetPowerStatus(address string) (status.PowerStatus, error) {
 
 	log.Printf("Querying power state of %v", address)
 
 	response, err := queryState("power_status ?", address)
 	if err != nil {
-		return Power{}, err
+		return status.PowerStatus{}, err
 	}
 
-	var status Power
+	var status status.PowerStatus
 	responseString := string(response)
 
 	if strings.Contains(responseString, "standby") {
 		status.Power = "standby"
 	} else if strings.Contains(responseString, "startup") {
-		status.Power = "startup"
+		status.Power = "on"
 	} else if strings.Contains(responseString, "on") {
 		status.Power = "on"
 	} else if strings.Contains(responseString, "cooling1") {
-		status.Power = "cooling1"
+		status.Power = "standby"
 	} else if strings.Contains(responseString, "cooling2") {
-		status.Power = "cooling2"
+		status.Power = "standby"
 	} else if strings.Contains(responseString, "saving_standby") {
-		status.Power = "saving_standby"
+		status.Power = "standby"
 	}
 
 	return status, nil

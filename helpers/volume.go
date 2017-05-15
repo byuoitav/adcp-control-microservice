@@ -4,14 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
-	"regexp"
-)
 
-type Volume struct {
-	Volume int `json:"volume"`
-}
+	"github.com/byuoitav/av-api/status"
+)
 
 type Mute struct {
 	Mute string `json:"mute"`
@@ -31,23 +29,23 @@ func SetVolume(address string, volumeLevel int) error {
 	return sendCommand(command, address)
 }
 
-func GetVolumeLevel(address string) (Volume, error) {
+func GetVolumeLevel(address string) (status.Volume, error) {
 
 	log.Printf("Querying volume of %s", address)
 
 	resp, err := queryState("volume ?", address)
 	if err != nil {
-		return Volume{}, err
+		return status.Volume{}, err
 	}
 
 	response := string(resp)
 	fields := strings.Fields(response)
 	level, err := strconv.Atoi(fields[0])
 	if err != nil {
-		return Volume{}, err
+		return status.Volume{}, err
 	}
 
-	return Volume{Volume: level}, nil
+	return status.Volume{Volume: level}, nil
 }
 
 func SetMute(address string, muted bool) error {
@@ -57,31 +55,34 @@ func SetMute(address string, muted bool) error {
 		log.Printf("Muting %s", address)
 		command = "muting \"on\""
 	} else {
-		log.Printf("Un-muting %s", address) 
+		log.Printf("Un-muting %s", address)
 		command = "muting \"off\""
 	}
 
 	err := sendCommand(command, address)
 	if err != nil {
-		 return err
-	 }
+		return err
+	}
 
-	 return nil
- }
+	return nil
+}
 
-func GetMuteStatus(address string) (Mute, error){
+func GetMuteStatus(address string) (status.MuteStatus, error) {
 
 	log.Printf("Querying mute status of %s", address)
 
 	resp, err := queryState("muting ?", address)
 	if err != nil {
-		return Mute{}, err
+		return status.MuteStatus{}, err
 	}
 
 	response := string(resp)
 	fields := strings.Fields(response)
 	reg := regexp.MustCompile(`"([^"]*)"`)
-    res := reg.ReplaceAllString(fields[0], "${1}")
-    fmt.Printf(res)
-	return Mute{Mute: res}, nil
+	res := reg.ReplaceAllString(fields[0], "${1}")
+	if res == "true" {
+		return status.MuteStatus{Muted: true}, nil
+	} else {
+		return status.MuteStatus{Muted: false}, nil
+	}
 }
