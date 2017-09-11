@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/byuoitav/adcp-control-microservice/helpers"
+	se "github.com/byuoitav/av-api/statusevaluators"
 	"github.com/labstack/echo"
 )
 
@@ -24,7 +25,7 @@ func SetVolume(context echo.Context) error {
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return context.JSON(http.StatusOK, "ok")
+	return context.JSON(http.StatusOK, se.Volume{level})
 }
 
 func PowerOn(context echo.Context) error {
@@ -36,7 +37,7 @@ func PowerOn(context echo.Context) error {
 	}
 
 	time.Sleep(3 * time.Second)
-	return context.JSON(http.StatusOK, "ok")
+	return context.JSON(http.StatusOK, se.PowerStatus{"on"})
 
 }
 
@@ -48,7 +49,7 @@ func PowerStandby(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 	time.Sleep(2 * time.Second)
-	return context.JSON(http.StatusOK, "ok")
+	return context.JSON(http.StatusOK, se.PowerStatus{"standby"})
 
 }
 
