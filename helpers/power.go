@@ -4,7 +4,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/byuoitav/av-api/status"
+	"github.com/byuoitav/av-api/statusevaluators"
 )
 
 func PowerOn(address string) error {
@@ -22,16 +22,16 @@ func PowerStandby(address string) error {
 	return sendCommand(command, address)
 }
 
-func GetPowerStatus(address string) (status.PowerStatus, error) {
+func GetPowerStatus(address string) (statusevaluators.PowerStatus, error) {
 
 	log.Printf("Querying power state of %v", address)
 
 	response, err := queryState("power_status ?", address)
 	if err != nil {
-		return status.PowerStatus{}, err
+		return statusevaluators.PowerStatus{}, err
 	}
 
-	var status status.PowerStatus
+	var status statusevaluators.PowerStatus
 	responseString := string(response)
 
 	if strings.Contains(responseString, "standby") {
