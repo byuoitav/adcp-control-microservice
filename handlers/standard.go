@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -66,6 +67,7 @@ func VolumeLevel(context echo.Context) error {
 }
 
 func Mute(context echo.Context) error {
+	log.Printf("Muting..")
 
 	address := context.Param("address")
 
@@ -78,6 +80,7 @@ func Mute(context echo.Context) error {
 }
 
 func UnMute(context echo.Context) error {
+	log.Printf("UnMuting..")
 
 	address := context.Param("address")
 
