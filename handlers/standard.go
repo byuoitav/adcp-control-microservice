@@ -62,7 +62,7 @@ func VolumeLevel(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, se.Volume{level})
+	return context.JSON(http.StatusOK, level)
 }
 
 func Mute(context echo.Context) error {
