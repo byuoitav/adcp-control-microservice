@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -63,6 +64,7 @@ func VolumeLevel(context echo.Context) error {
 }
 
 func Mute(context echo.Context) error {
+	log.Printf("Muting..")
 
 	address := context.Param("address")
 
@@ -71,10 +73,11 @@ func Mute(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, "ok")
+	return context.JSON(http.StatusOK, se.MuteStatus{true})
 }
 
 func UnMute(context echo.Context) error {
+	log.Printf("UnMuting..")
 
 	address := context.Param("address")
 
@@ -83,7 +86,7 @@ func UnMute(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, "ok")
+	return context.JSON(http.StatusOK, se.MuteStatus{false})
 }
 
 func MuteStatus(context echo.Context) error {
