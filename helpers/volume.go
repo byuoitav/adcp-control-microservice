@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/byuoitav/av-api/status"
+	se "github.com/byuoitav/av-api/statusevaluators"
 )
 
 type Mute struct {
@@ -29,23 +29,23 @@ func SetVolume(address string, volumeLevel int) error {
 	return sendCommand(command, address)
 }
 
-func GetVolumeLevel(address string) (status.Volume, error) {
+func GetVolumeLevel(address string) (se.Volume, error) {
 
 	log.Printf("Querying volume of %s", address)
 
 	resp, err := queryState("volume ?", address)
 	if err != nil {
-		return status.Volume{}, err
+		return se.Volume{}, err
 	}
 
 	response := string(resp)
 	fields := strings.Fields(response)
 	level, err := strconv.Atoi(fields[0])
 	if err != nil {
-		return status.Volume{}, err
+		return se.Volume{}, err
 	}
 
-	return status.Volume{Volume: level}, nil
+	return se.Volume{Volume: level}, nil
 }
 
 func SetMute(address string, muted bool) error {
@@ -67,13 +67,13 @@ func SetMute(address string, muted bool) error {
 	return nil
 }
 
-func GetMuteStatus(address string) (status.MuteStatus, error) {
+func GetMuteStatus(address string) (se.MuteStatus, error) {
 
 	log.Printf("Querying mute status of %s", address)
 
 	resp, err := queryState("muting ?", address)
 	if err != nil {
-		return status.MuteStatus{}, err
+		return se.MuteStatus{}, err
 	}
 
 	response := string(resp)
@@ -81,8 +81,8 @@ func GetMuteStatus(address string) (status.MuteStatus, error) {
 	reg := regexp.MustCompile(`"([^"]*)"`)
 	res := reg.ReplaceAllString(fields[0], "${1}")
 	if res == "true" {
-		return status.MuteStatus{Muted: true}, nil
+		return se.MuteStatus{Muted: true}, nil
 	} else {
-		return status.MuteStatus{Muted: false}, nil
+		return se.MuteStatus{Muted: false}, nil
 	}
 }
