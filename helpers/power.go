@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/byuoitav/av-api/statusevaluators"
+	"github.com/fatih/color"
 )
 
 func PowerOn(address string) error {
@@ -24,7 +25,7 @@ func PowerStandby(address string) error {
 
 func GetPowerStatus(address string) (statusevaluators.PowerStatus, error) {
 
-	log.Printf("Querying power state of %v", address)
+	log.Printf("%s", color.HiCyanString("[helpers] querying power state of %v", address))
 
 	response, err := queryState("power_status ?", address)
 	if err != nil {
