@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/byuoitav/adcp-control-microservice/helpers"
 	se "github.com/byuoitav/av-api/statusevaluators"
@@ -37,7 +36,6 @@ func PowerOn(context echo.Context) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	time.Sleep(3 * time.Second)
 	return context.JSON(http.StatusOK, se.PowerStatus{"on"})
 
 }
@@ -49,7 +47,6 @@ func PowerStandby(context echo.Context) error {
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-	time.Sleep(2 * time.Second)
 	return context.JSON(http.StatusOK, se.PowerStatus{"standby"})
 
 }
