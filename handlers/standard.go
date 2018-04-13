@@ -51,18 +51,6 @@ func PowerStandby(context echo.Context) error {
 
 }
 
-func VolumeLevel(context echo.Context) error {
-
-	address := context.Param("address")
-
-	level, err := helpers.GetVolumeLevel(address)
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, level)
-}
-
 func Mute(context echo.Context) error {
 	log.Printf("Muting..")
 
@@ -89,6 +77,58 @@ func UnMute(context echo.Context) error {
 	return context.JSON(http.StatusOK, se.MuteStatus{false})
 }
 
+func DisplayBlank(context echo.Context) error {
+	log.Printf("Blanking Display..")
+
+	address := context.Param("address")
+
+	err := helpers.SetBlank(address, true)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, se.BlankedStatus{true})
+}
+
+func DisplayUnBlank(context echo.Context) error {
+	log.Printf("Unblanking Display..")
+
+	address := context.Param("address")
+
+	err := helpers.SetBlank(address, false)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, se.BlankedStatus{false})
+}
+
+func SetInputPort(context echo.Context) error {
+	log.Printf("Setting input...")
+
+	port := context.Param("port")
+	address := context.Param("address")
+
+	err := helpers.SetInput(address, port)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, se.Input{port})
+}
+
+func VolumeLevel(context echo.Context) error {
+
+	address := context.Param("address")
+
+	level, err := helpers.GetVolumeLevel(address)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, level)
+}
+
 func MuteStatus(context echo.Context) error {
 
 	address := context.Param("address")
@@ -106,6 +146,28 @@ func PowerStatus(context echo.Context) error {
 	address := context.Param("address")
 
 	status, err := helpers.GetPowerStatus(address)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, status)
+}
+
+func BlankedStatus(context echo.Context) error {
+	address := context.Param("address")
+
+	status, err := helpers.GetBlankStatus(address)
+	if err != nil {
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, status)
+}
+
+func InputStatus(context echo.Context) error {
+	address := context.Param("address")
+
+	status, err := helpers.GetInputStatus(address)
 	if err != nil {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}

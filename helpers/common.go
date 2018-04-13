@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"log"
@@ -95,6 +96,11 @@ func queryState(command string, address string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
+
+	// trim specific chars off the response
+	resp = bytes.Trim(resp, "\u0000")
+	resp = bytes.Trim(resp, "\n")
+	resp = bytes.Trim(resp, "\r")
 
 	return resp, nil
 }
