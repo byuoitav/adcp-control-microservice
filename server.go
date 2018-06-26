@@ -5,6 +5,7 @@ import (
 
 	"github.com/byuoitav/adcp-control-microservice/handlers"
 	"github.com/byuoitav/authmiddleware"
+	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/hateoas"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
@@ -58,6 +59,10 @@ func main() {
 	secure.GET("/pooled/:address/power/status", handlers.PowerStatusPooled)
 	secure.GET("/pooled/:address/display/status", handlers.BlankedStatusPooled)
 	secure.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
+
+	secure.PUT("/log-level/:level", log.SetLogLevel)
+	secure.GET("/log-level/", log.GetLogLevel)
+
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,
