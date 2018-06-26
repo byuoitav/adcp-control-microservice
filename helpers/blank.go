@@ -6,9 +6,10 @@ import (
 	"strings"
 
 	"github.com/byuoitav/av-api/statusevaluators"
+	"github.com/byuoitav/common/nerr"
 )
 
-func SetBlank(address string, blank bool) error {
+func SetBlank(address string, blank, pooled bool) *nerr.E {
 	log.Printf("Setting blank on %s to %v", address, blank)
 
 	var command string
@@ -18,13 +19,13 @@ func SetBlank(address string, blank bool) error {
 		command = fmt.Sprintf("blank \"off\"")
 	}
 
-	return sendCommand(command, address)
+	return sendCommand(command, address, pooled)
 }
 
-func GetBlankStatus(address string) (statusevaluators.BlankedStatus, error) {
+func GetBlankStatus(address string, pooled bool) (statusevaluators.BlankedStatus, *nerr.E) {
 	log.Printf("Querying blank status of %s", address)
 
-	response, err := queryState("blank ?", address)
+	response, err := queryState("blank ?", address, pooled)
 	if err != nil {
 		return statusevaluators.BlankedStatus{}, err
 	}

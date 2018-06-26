@@ -40,6 +40,24 @@ func main() {
 	secure.GET("/:address/display/status", handlers.BlankedStatus)
 	secure.GET("/:address/input/current", handlers.InputStatus)
 
+	//------------------
+	//Pooled endpoints
+	//------------------
+	secure.GET("/pooled/:address/volume/set/:level", handlers.SetVolumePooled)
+	secure.GET("/pooled/:address/power/on", handlers.PowerOnPooled)
+	secure.GET("/pooled/:address/power/standby", handlers.PowerStandbyPooled)
+	secure.GET("/pooled/:address/volume/mute", handlers.MutePooled)
+	secure.GET("/pooled/:address/volume/unmute", handlers.UnMutePooled)
+	secure.GET("/pooled/:address/display/blank", handlers.DisplayBlankPooled)
+	secure.GET("/pooled/:address/display/unblank", handlers.DisplayUnBlankPooled)
+	secure.GET("/pooled/:address/input/:port", handlers.SetInputPortPooled)
+
+	//status endpoints
+	secure.GET("/pooled/:address/volume/level", handlers.VolumeLevelPooled)
+	secure.GET("/pooled/:address/volume/mute/status", handlers.MuteStatusPooled)
+	secure.GET("/pooled/:address/power/status", handlers.PowerStatusPooled)
+	secure.GET("/pooled/:address/display/status", handlers.BlankedStatusPooled)
+	secure.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
 	server := http.Server{
 		Addr:           port,
 		MaxHeaderBytes: 1024 * 10,
