@@ -29,11 +29,16 @@ func main() {
 	secure.GET("/:address/power/standby", handlers.PowerStandby)
 	secure.GET("/:address/volume/mute", handlers.Mute)
 	secure.GET("/:address/volume/unmute", handlers.UnMute)
+	secure.GET("/:address/display/blank", handlers.DisplayBlank)
+	secure.GET("/:address/display/unblank", handlers.DisplayUnBlank)
+	secure.GET("/:address/input/:port", handlers.SetInputPort)
 
 	//status endpoints
 	secure.GET("/:address/volume/level", handlers.VolumeLevel)
 	secure.GET("/:address/volume/mute/status", handlers.MuteStatus)
 	secure.GET("/:address/power/status", handlers.PowerStatus)
+	secure.GET("/:address/display/status", handlers.BlankedStatus)
+	secure.GET("/:address/input/current", handlers.InputStatus)
 
 	server := http.Server{
 		Addr:           port,

@@ -9,7 +9,6 @@ import (
 )
 
 func PowerOn(address string) error {
-
 	log.Printf("Setting power of %v to on", address)
 	command := "power \"on\""
 
@@ -24,7 +23,6 @@ func PowerStandby(address string) error {
 }
 
 func GetPowerStatus(address string) (statusevaluators.PowerStatus, error) {
-
 	log.Printf("%s", color.HiCyanString("[helpers] querying power state of %v", address))
 
 	response, err := queryState("power_status ?", address)
