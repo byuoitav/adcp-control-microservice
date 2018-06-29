@@ -29,27 +29,40 @@ func sendCommand(command string, address string, pooled bool) *nerr.E {
 	//if pooled we defer to something else else
 	if pooled {
 
+		//make our request
+		resp := MakeRequest(Request{
+			Command: command,
+			Address: address,
+			Query:   false,
+		})
+
+		if resp.Err != nil {
+			return resp.Err.Addf("Couldn't send command through the pooled connection")
+		}
+
+		return nil
 	}
-
-	log.L.Debugf("Sending command %s", command)
-
-	command = command + "\r\n"
 
 	conn, err := getConnection(address)
 	if err != nil {
 		return err.Addf("Couldn't issue command %v to %v", command, address)
 	}
+
+	_, err = readUntil('\n', conn, 3)
+	if err != nil {
+		return err.Addf(fmt.Sprintf("Error reading first response on connect %s", err.Error()), "protocol")
+	}
+
 	defer conn.Close()
 	return SendCommandWithConn(command, address, conn)
 
 }
 
 func SendCommandWithConn(command, address string, conn *net.TCPConn) *nerr.E {
-	_, err := readUntil('\n', conn, 3)
-	if err != nil {
-		return err.Addf("Error reading first response on connect")
-	}
 
+	log.L.Debugf("Sending command %s", command)
+
+	command = command + "\r\n"
 	_, er := conn.Write([]byte(command))
 	if er != nil {
 		return nerr.Translate(er).Addf("Error sending command")
@@ -70,16 +83,28 @@ func SendCommandWithConn(command, address string, conn *net.TCPConn) *nerr.E {
 func queryState(command string, address string, pooled bool) ([]byte, *nerr.E) {
 	//if pooled we do something else
 	if pooled {
+		//make our request
+		resp := MakeRequest(Request{
+			Command: command,
+			Address: address,
+			Query:   true,
+		})
 
+		if resp.Err != nil {
+			return []byte{}, resp.Err.Addf("Couldn't query state through the pooled connection")
+		}
+
+		return resp.Body, nil
 	}
-
-	log.L.Debugf("Sending command %s", command)
-
-	command = command + "\r\n"
 
 	connection, err := getConnection(address)
 	if err != nil {
 		return []byte{}, nerr.Translate(err).Addf("Couldn't query state %v of %v", command, address)
+	}
+
+	_, err = readUntil('\n', connection, 3)
+	if err != nil {
+		return []byte{}, err.Addf(fmt.Sprintf("Error reading first response on connect %s", err.Error()), "protocol")
 	}
 	defer connection.Close()
 	return QueryStateWithConn(command, address, connection)
@@ -87,14 +112,13 @@ func queryState(command string, address string, pooled bool) ([]byte, *nerr.E) {
 }
 
 func QueryStateWithConn(command, address string, conn *net.TCPConn) ([]byte, *nerr.E) {
-	_, err := readUntil('\n', conn, 3)
-	if err != nil {
-		return []byte{}, err.Addf(fmt.Sprintf("Error reading first response on connect %s", err.Error()), "protocol")
-	}
+
+	log.L.Debugf("Sending command %s", command)
+	command = command + "\r\n"
 
 	_, er := conn.Write([]byte(command))
 	if er != nil {
-		return []byte{}, nerr.Translate(err).Addf("Error sending command %s to %v", command, address)
+		return []byte{}, nerr.Translate(er).Addf("Error sending command %s to %v", command, address)
 	}
 
 	resp, err := readUntil('\n', conn, 10)

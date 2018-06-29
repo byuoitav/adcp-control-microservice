@@ -1,6 +1,7 @@
-package pooled
+package helpers
 
 import (
+	"fmt"
 	"net"
 	"time"
 
@@ -34,31 +35,65 @@ type Response struct {
 	Err  *nerr.E
 }
 
-func getConnection(addr string) (*net.TCPConn, *nerr.E) {
+func init() {
+	connmap = make(map[string]*Connection)
+}
 
-	//Build a new TCP connection with the address
-	radder, err := net.ResolveTCPAddr("tcp", addr)
+func MakeRequest(req Request) Response {
+
+	req.ResponseChannel = make(chan Response, 1)
+
+	log.L.Debugf("Making pooled request against %v", req.Address)
+
+	conn, err := getPooledConnection(req.Address)
 	if err != nil {
-		return nil, nerr.Translate(err).Addf("Couldn't resolve address %v", addr)
+		return Response{
+			Err: err.Addf("Couldn't get the connection to make request %v against %v", req.Command, req.Address),
+		}
 	}
 
-	conn, err := net.DialTCP("tcp", nil, radder)
-	if err != nil {
-		return nil, nerr.Translate(err).Addf("Couldn't dial address %v", addr)
+	log.L.Debugf("Sending request down channel. Channel len: %v", len(conn.InChannel))
+	//we write the request to the channel
+	conn.InChannel <- req
+
+	//now we wait
+	resp := <-req.ResponseChannel
+
+	log.L.Debugf("Response back.")
+
+	if resp.Err != nil {
+		log.L.Debugf("Error in response: %v", resp.Err.Error())
 	}
 
-	return conn, nil
+	return resp
+}
+
+func getPooledConnection(addr string) (*Connection, *nerr.E) {
+	v, ok := connmap[addr]
+	if ok {
+		log.L.Debugf("Using saved connection for %v", addr)
+		return v, nil
+	}
+
+	return StartConnection(addr)
 }
 
 func StartConnection(address string) (*Connection, *nerr.E) {
-	conn, err := getConnection(address)
+	con, err := getConnection(address)
 	if err != nil {
 		return nil, err.Addf("Cannot get connection to start the conncetion minder")
 	}
 
+	log.L.Debugf("Reading first newline on connect")
+
+	_, err = readUntil('\n', con, 3)
+	if err != nil {
+		return nil, err.Addf(fmt.Sprintf("Error reading first response on connect %s", err.Error()), "protocol")
+	}
+
 	conn := &Connection{
-		Conn:              conn,
-		Address:           addr,
+		Conn:              con,
+		Address:           address,
 		InChannel:         make(chan Request, bufferSize),
 		SeppukuChannel:    make(chan bool, 1),
 		LastCommunication: time.Now(),
@@ -66,10 +101,16 @@ func StartConnection(address string) (*Connection, *nerr.E) {
 
 	go StartMinder(conn)
 
-	return conn
+	connmap[address] = conn
+
+	return conn, nil
 }
 
 func StartMinder(conn *Connection) {
+
+	//close the connection when we get out
+	defer conn.Conn.Close()
+
 	log.L.Infof("Starting minder for %v", conn.Address)
 	for {
 		select {
@@ -97,13 +138,15 @@ func StartMinder(conn *Connection) {
 func handleReq(conn *Connection, req Request) {
 
 	if req.Query {
+		log.L.Debugf("Handling a query request")
 		v, err := QueryStateWithConn(req.Command, req.Address, conn.Conn)
 		req.ResponseChannel <- Response{
 			Body: v,
 			Err:  err,
 		}
 	} else {
-		err := SendCommandWithCon(req.Command, req.Address, conn.Conn)
+		log.L.Debugf("Handling a Set State command")
+		err := SendCommandWithConn(req.Command, req.Address, conn.Conn)
 		req.ResponseChannel <- Response{
 			Err: err,
 		}

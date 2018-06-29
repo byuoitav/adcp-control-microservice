@@ -61,7 +61,7 @@ func main() {
 	secure.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
 
 	secure.PUT("/log-level/:level", log.SetLogLevel)
-	secure.GET("/log-level/", log.GetLogLevel)
+	secure.GET("/log-level", log.GetLogLevel)
 
 	server := http.Server{
 		Addr:           port,
