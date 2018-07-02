@@ -1,12 +1,12 @@
 package helpers
 
 import (
-	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/byuoitav/av-api/statusevaluators"
+	"github.com/byuoitav/common/log"
+	"github.com/byuoitav/common/nerr"
 )
 
 var validADCPInputs = []string{
@@ -24,8 +24,8 @@ var validADCPInputs = []string{
 	"option1",
 }
 
-func SetInput(address, port string) error {
-	log.Printf("Setting input on %s to %s", address, port)
+func SetInput(address, port string, pooled bool) *nerr.E {
+	log.L.Debugf("Setting input on %s to %s", address, port)
 
 	validInput := false
 	for _, input := range validADCPInputs {
@@ -36,19 +36,19 @@ func SetInput(address, port string) error {
 	}
 
 	if !validInput {
-		return errors.New(fmt.Sprintf("error: %s is not a valid ADCP input.", port))
+		return nerr.Create(fmt.Sprintf("error: %s is not a valid ADCP input.", port), "invalid port")
 	}
 
 	command := fmt.Sprintf("input \"%s\"", port)
-	return sendCommand(command, address)
+	return sendCommand(command, address, pooled)
 }
 
-func GetInputStatus(address string) (statusevaluators.Input, error) {
-	log.Printf("Querying input status of %s", address)
+func GetInputStatus(address string, pooled bool) (statusevaluators.Input, *nerr.E) {
+	log.L.Debugf("Querying input status of %s", address)
 
-	response, err := queryState("input ?", address)
+	response, err := queryState("input ?", address, pooled)
 	if err != nil {
-		return statusevaluators.Input{}, nil
+		return statusevaluators.Input{}, err.Add("Couldn't query input status")
 	}
 
 	status := statusevaluators.Input{
