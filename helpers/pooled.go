@@ -11,7 +11,8 @@ import (
 
 const bufferSize = 1000
 
-const timout = 600
+const ttl = 20
+const pruneinterval = 10
 
 var connmap map[string]*Connection
 
@@ -37,6 +38,7 @@ type Response struct {
 
 func init() {
 	connmap = make(map[string]*Connection)
+	go startGardener()
 }
 
 func MakeRequest(req Request) Response {
@@ -113,6 +115,7 @@ func StartMinder(conn *Connection) {
 
 	log.L.Infof("Starting minder for %v", conn.Address)
 	for {
+		conn.LastCommunication = time.Now()
 		select {
 		case req := <-conn.InChannel:
 			log.L.Debugf("Handling request for: %v", conn.Address)
@@ -149,6 +152,25 @@ func handleReq(conn *Connection, req Request) {
 		err := SendCommandWithConn(req.Command, req.Address, conn.Conn)
 		req.ResponseChannel <- Response{
 			Err: err,
+		}
+	}
+}
+
+func startGardener() {
+	log.L.Infof("Starting gardener. Pruning interval is %v and ttl is %v", pruneinterval, ttl)
+
+	ticker := time.NewTicker(time.Duration(pruneinterval) * time.Second)
+	for {
+		//wait for the ticker
+		<-ticker.C
+
+		log.L.Debugf("Running gardener")
+		for k, v := range connmap {
+			if time.Since(v.LastCommunication) > (time.Duration(ttl) * time.Second) {
+				log.L.Debugf("Pruning connection for %v. Last communication over the channel was %v", k, v.LastCommunication)
+				// time to kill it
+				v.SeppukuChannel <- true
+			}
 		}
 	}
 }
