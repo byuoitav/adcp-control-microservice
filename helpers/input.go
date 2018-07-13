@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/byuoitav/av-api/statusevaluators"
+	"github.com/byuoitav/common/status"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/nerr"
 )
@@ -43,15 +43,15 @@ func SetInput(address, port string, pooled bool) *nerr.E {
 	return sendCommand(command, address, pooled)
 }
 
-func GetInputStatus(address string, pooled bool) (statusevaluators.Input, *nerr.E) {
+func GetInputStatus(address string, pooled bool) (status.Input, *nerr.E) {
 	log.L.Debugf("Querying input status of %s", address)
 
 	response, err := queryState("input ?", address, pooled)
 	if err != nil {
-		return statusevaluators.Input{}, err.Add("Couldn't query input status")
+		return status.Input{}, err.Add("Couldn't query input status")
 	}
 
-	status := statusevaluators.Input{
+	status := status.Input{
 		Input: strings.Trim(string(response), "\""),
 	}
 	return status, nil
