@@ -4,8 +4,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/byuoitav/av-api/statusevaluators"
 	"github.com/byuoitav/common/nerr"
+	"github.com/byuoitav/common/status"
 	"github.com/fatih/color"
 )
 
@@ -23,16 +23,16 @@ func PowerStandby(address string, pooled bool) *nerr.E {
 	return sendCommand(command, address, pooled)
 }
 
-func GetPowerStatus(address string, pooled bool) (statusevaluators.PowerStatus, *nerr.E) {
+func GetPower(address string, pooled bool) (status.Power, *nerr.E) {
 
 	log.Printf("%s", color.HiCyanString("[helpers] querying power state of %v", address))
 
 	response, err := queryState("power_status ?", address, pooled)
 	if err != nil {
-		return statusevaluators.PowerStatus{}, err
+		return status.Power{}, err
 	}
 
-	var status statusevaluators.PowerStatus
+	var status status.Power
 	responseString := string(response)
 
 	if strings.Contains(responseString, "standby") {

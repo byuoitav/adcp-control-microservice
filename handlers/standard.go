@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/byuoitav/adcp-control-microservice/helpers"
-	se "github.com/byuoitav/av-api/statusevaluators"
 	"github.com/byuoitav/common/log"
+	se "github.com/byuoitav/common/status"
 	"github.com/labstack/echo"
 )
 
@@ -39,7 +39,7 @@ func powerOn(context echo.Context, pooled bool) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, se.PowerStatus{"on"})
+	return context.JSON(http.StatusOK, se.Power{"on"})
 
 }
 
@@ -51,7 +51,7 @@ func powerStandby(context echo.Context, pooled bool) error {
 		log.L.Warnf(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
-	return context.JSON(http.StatusOK, se.PowerStatus{"standby"})
+	return context.JSON(http.StatusOK, se.Power{"standby"})
 
 }
 
@@ -66,7 +66,7 @@ func mute(context echo.Context, pooled bool) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, se.MuteStatus{true})
+	return context.JSON(http.StatusOK, se.Mute{true})
 }
 
 func unMute(context echo.Context, pooled bool) error {
@@ -80,7 +80,7 @@ func unMute(context echo.Context, pooled bool) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, se.MuteStatus{false})
+	return context.JSON(http.StatusOK, se.Mute{false})
 }
 
 func displayBlank(context echo.Context, pooled bool) error {
@@ -94,7 +94,7 @@ func displayBlank(context echo.Context, pooled bool) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, se.BlankedStatus{true})
+	return context.JSON(http.StatusOK, se.Blanked{true})
 }
 
 func displayUnBlank(context echo.Context, pooled bool) error {
@@ -108,7 +108,7 @@ func displayUnBlank(context echo.Context, pooled bool) error {
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, se.BlankedStatus{false})
+	return context.JSON(http.StatusOK, se.Blanked{false})
 }
 
 func setInputPort(context echo.Context, pooled bool) error {
@@ -143,7 +143,7 @@ func muteStatus(context echo.Context, pooled bool) error {
 
 	address := context.Param("address")
 
-	status, err := helpers.GetMuteStatus(address, pooled)
+	status, err := helpers.GetMute(address, pooled)
 	if err != nil {
 		log.L.Warnf(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
@@ -156,7 +156,7 @@ func powerStatus(context echo.Context, pooled bool) error {
 
 	address := context.Param("address")
 
-	status, err := helpers.GetPowerStatus(address, pooled)
+	status, err := helpers.GetPower(address, pooled)
 	if err != nil {
 		log.L.Warnf(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
