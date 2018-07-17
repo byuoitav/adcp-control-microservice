@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	se "github.com/byuoitav/av-api/statusevaluators"
 	"github.com/byuoitav/common/nerr"
+	se "github.com/byuoitav/common/status"
 )
 
 type Mute struct {
@@ -64,13 +64,13 @@ func SetMute(address string, muted bool, pooled bool) *nerr.E {
 	return nil
 }
 
-func GetMuteStatus(address string, pooled bool) (se.MuteStatus, *nerr.E) {
+func GetMute(address string, pooled bool) (se.Mute, *nerr.E) {
 
 	log.Printf("Querying mute status of %s", address)
 
 	resp, err := queryState("muting ?", address, pooled)
 	if err != nil {
-		return se.MuteStatus{}, err
+		return se.Mute{}, err
 	}
 
 	response := string(resp)
@@ -78,8 +78,8 @@ func GetMuteStatus(address string, pooled bool) (se.MuteStatus, *nerr.E) {
 	reg := regexp.MustCompile(`"([^"]*)"`)
 	res := reg.ReplaceAllString(fields[0], "${1}")
 	if res == "true" {
-		return se.MuteStatus{Muted: true}, nil
+		return se.Mute{Muted: true}, nil
 	} else {
-		return se.MuteStatus{Muted: false}, nil
+		return se.Mute{Muted: false}, nil
 	}
 }
