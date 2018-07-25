@@ -5,6 +5,7 @@ import (
 
 	"github.com/byuoitav/adcp-control-microservice/handlers"
 	"github.com/byuoitav/authmiddleware"
+	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/hateoas"
 	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
@@ -29,11 +30,38 @@ func main() {
 	secure.GET("/:address/power/standby", handlers.PowerStandby)
 	secure.GET("/:address/volume/mute", handlers.Mute)
 	secure.GET("/:address/volume/unmute", handlers.UnMute)
+	secure.GET("/:address/display/blank", handlers.DisplayBlank)
+	secure.GET("/:address/display/unblank", handlers.DisplayUnBlank)
+	secure.GET("/:address/input/:port", handlers.SetInputPort)
 
 	//status endpoints
 	secure.GET("/:address/volume/level", handlers.VolumeLevel)
 	secure.GET("/:address/volume/mute/status", handlers.MuteStatus)
 	secure.GET("/:address/power/status", handlers.PowerStatus)
+	secure.GET("/:address/display/status", handlers.BlankedStatus)
+	secure.GET("/:address/input/current", handlers.InputStatus)
+
+	//------------------
+	//Pooled endpoints
+	//------------------
+	secure.GET("/pooled/:address/volume/set/:level", handlers.SetVolumePooled)
+	secure.GET("/pooled/:address/power/on", handlers.PowerOnPooled)
+	secure.GET("/pooled/:address/power/standby", handlers.PowerStandbyPooled)
+	secure.GET("/pooled/:address/volume/mute", handlers.MutePooled)
+	secure.GET("/pooled/:address/volume/unmute", handlers.UnMutePooled)
+	secure.GET("/pooled/:address/display/blank", handlers.DisplayBlankPooled)
+	secure.GET("/pooled/:address/display/unblank", handlers.DisplayUnBlankPooled)
+	secure.GET("/pooled/:address/input/:port", handlers.SetInputPortPooled)
+
+	//status endpoints
+	secure.GET("/pooled/:address/volume/level", handlers.VolumeLevelPooled)
+	secure.GET("/pooled/:address/volume/mute/status", handlers.MuteStatusPooled)
+	secure.GET("/pooled/:address/power/status", handlers.PowerStatusPooled)
+	secure.GET("/pooled/:address/display/status", handlers.BlankedStatusPooled)
+	secure.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
+
+	secure.PUT("/log-level/:level", log.SetLogLevel)
+	secure.GET("/log-level", log.GetLogLevel)
 
 	server := http.Server{
 		Addr:           port,
