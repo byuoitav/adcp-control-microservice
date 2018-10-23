@@ -1,0 +1,5 @@
+{
+    "name": "adcp-control-microservice",
+    "port": ":8012",
+    "env-vars": []
+}

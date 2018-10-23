@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-
 	port := ":8012"
 	router := echo.New()
 	router.Pre(middleware.RemoveTrailingSlash())
