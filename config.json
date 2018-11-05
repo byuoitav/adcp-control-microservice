@@ -1,5 +1,8 @@
 {
     "name": "adcp-control-microservice",
     "port": ":8012",
-    "env-vars": []
+    "env-vars": [
+        "BYPASS_AUTH",
+        "ROOM_SYSTEM"
+    ]
 }
