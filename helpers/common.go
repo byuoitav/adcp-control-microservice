@@ -145,8 +145,10 @@ func readUntil(delimeter byte, conn *net.TCPConn, timeoutInSeconds int) ([]byte,
 	for !charInBuffer(delimeter, buffer) {
 		_, err := conn.Read(buffer)
 		if err != nil {
+			log.L.Debugf("Read %s", buffer)
 			return message, nerr.Translate(err).Add("Couldn't read until delimeter")
 		}
+		log.L.Debugf("Read %s", buffer)
 
 		message = append(message, buffer...)
 	}
