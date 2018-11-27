@@ -35,7 +35,7 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 		return toReturn, err.Add("Couldn't query the IP address")
 	}
 
-	toReturn.IPAddress = toString(ipBytes)
+	toReturn.NetworkInfo.IPAddress = toString(ipBytes)
 
 	// get the MAC address
 	macBytes, err := queryState("mac_address ?", address, true)
@@ -43,7 +43,7 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 		return toReturn, err.Add("Couldn't query the MAC address")
 	}
 
-	toReturn.MACAddress = toString(macBytes)
+	toReturn.NetworkInfo.MACAddress = toString(macBytes)
 
 	// get the serial number
 	serialBytes, err := queryState("serialnum ?", address, true)
