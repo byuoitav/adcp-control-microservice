@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/byuoitav/common/status"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/nerr"
+	"github.com/byuoitav/common/status"
 )
 
 var validADCPInputs = []string{
@@ -55,4 +55,18 @@ func GetInputStatus(address string, pooled bool) (status.Input, *nerr.E) {
 		Input: strings.Trim(string(response), "\""),
 	}
 	return status, nil
+}
+
+// HasActiveInput checks to see if the projector has an input active currently.
+func HasActiveInput(address string, pooled bool) (bool, *nerr.E) {
+	log.L.Debugf("Checking if %s has an active input right now", address)
+
+	response, err := queryState("signal ?", address, pooled)
+	if err != nil {
+		return false, err.Add("Couldn't get active signal")
+	}
+
+	active := strings.Trim(string(response), "\"")
+
+	return (active != "Invalid"), nil
 }
