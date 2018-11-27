@@ -14,9 +14,6 @@ import (
 func main() {
 	port := ":8012"
 	router := common.NewRouter()
-	// Use the `secure` routing group to require authentication
-	//secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
-
 	router.GET("/", echo.WrapHandler(http.HandlerFunc(hateoas.RootResponse)))
 
 	write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
@@ -38,9 +35,7 @@ func main() {
 	read.GET("/:address/display/status", handlers.BlankedStatus)
 	read.GET("/:address/input/current", handlers.InputStatus)
 	read.GET("/:address/input/active", handlers.HasActiveInput)
-	read.GET("/:address/serial", handlers.SerialNumber)
-	read.GET("/:address/model", handlers.ModelName)
-	read.GET("/:address/MAC", handlers.MACAddress)
+	read.GET("/:address/hardware", handlers.GetHardwareInfo)
 
 	//------------------
 	//Pooled endpoints
@@ -61,9 +56,7 @@ func main() {
 	read.GET("/pooled/:address/display/status", handlers.BlankedStatusPooled)
 	read.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
 	read.GET("/pooled/:address/input/active", handlers.HasActiveInputPooled)
-	read.GET("/pooled/:address/serial", handlers.SerialNumberPooled)
-	read.GET("/pooled/:address/model", handlers.ModelNamePooled)
-	read.GET("/pooled/:address/MAC", handlers.MACAddressPooled)
+	read.GET("/pooled/:address/hardware", handlers.GetHardwareInfoPooled)
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
 	router.GET("/log-level", log.GetLogLevel)

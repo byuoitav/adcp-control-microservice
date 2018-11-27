@@ -197,38 +197,14 @@ func hasActiveInput(context echo.Context, pooled bool) error {
 	return context.JSON(http.StatusOK, active)
 }
 
-func serialNumber(context echo.Context, pooled bool) error {
+func getHardwareInfo(context echo.Context, pooled bool) error {
 	address := context.Param("address")
 
-	serial, err := helpers.GetSerialNumber(address, pooled)
+	hardware, err := helpers.GetHardwareInfo(address, pooled)
 	if err != nil {
 		log.L.Warnf(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, serial)
-}
-
-func modelName(context echo.Context, pooled bool) error {
-	address := context.Param("address")
-
-	model, err := helpers.GetModelName(address, pooled)
-	if err != nil {
-		log.L.Warnf(err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, model)
-}
-
-func macAddress(context echo.Context, pooled bool) error {
-	address := context.Param("address")
-
-	mac, err := helpers.GetMACAddress(address, pooled)
-	if err != nil {
-		log.L.Warnf(err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, mac)
+	return context.JSON(http.StatusOK, hardware)
 }

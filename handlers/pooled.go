@@ -144,32 +144,12 @@ func HasActiveInput(context echo.Context) error {
 	return hasActiveInput(context, false)
 }
 
-// SerialNumberPooled gets the serial number when pooled
-func SerialNumberPooled(context echo.Context) error {
-	return serialNumber(context, true)
+// GetHardwareInfoPooled obtains the hardware information when pooled
+func GetHardwareInfoPooled(context echo.Context) error {
+	return getHardwareInfo(context, true)
 }
 
-// SerialNumber gets the serial number
-func SerialNumber(context echo.Context) error {
-	return serialNumber(context, false)
-}
-
-// ModelNamePooled gets the model name when pooled
-func ModelNamePooled(context echo.Context) error {
-	return modelName(context, true)
-}
-
-// ModelName gets the model name
-func ModelName(context echo.Context) error {
-	return modelName(context, false)
-}
-
-// MACAddressPooled gets the MAC address when pooled
-func MACAddressPooled(context echo.Context) error {
-	return macAddress(context, true)
-}
-
-// MACAddress gets the MAC address
-func MACAddress(context echo.Context) error {
-	return macAddress(context, false)
+// GetHardwareInfo obtains the hardware information
+func GetHardwareInfo(context echo.Context) error {
+	return getHardwareInfo(context, false)
 }
