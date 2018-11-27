@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"net"
 	"strings"
 
 	"github.com/byuoitav/common/nerr"
@@ -11,6 +12,14 @@ import (
 // GetHardwareInfo gets the necessary hardware information from this device and returns it.
 func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E) {
 	var toReturn structs.HardwareInfo
+
+	// get the hostname
+	addr, e := net.LookupAddr(address)
+	if e != nil {
+		toReturn.Hostname = address
+	} else {
+		toReturn.Hostname = strings.Trim(addr[0], ".")
+	}
 
 	// get the model name
 	modelBytes, err := queryState("modelname ?", address, pooled)
@@ -52,9 +61,9 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 
 	var firmware []map[string]string
 
-	e := json.Unmarshal(firmwareBytes, &firmware)
+	e = json.Unmarshal(firmwareBytes, &firmware)
 	if e != nil {
-		return toReturn, err.Add(e.Error())
+		return toReturn, nerr.Translate(e)
 	}
 
 	toReturn.FirmwareVersion = firmware
@@ -77,7 +86,7 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 
 	e = json.Unmarshal(warnBytes, &warnings)
 	if e != nil {
-		return toReturn, err.Add(e.Error())
+		return toReturn, nerr.Translate(e)
 	}
 
 	toReturn.WarningStatus = warnings
@@ -92,10 +101,33 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 
 	e = json.Unmarshal(errBytes, &errors)
 	if e != nil {
-		return toReturn, err.Add(e.Error())
+		return toReturn, nerr.Translate(e)
 	}
 
 	toReturn.ErrorStatus = errors
+
+	// get the power status
+	powerBytes, err := queryState("power_status ?", address, true)
+	if err != nil {
+		return toReturn, err.Add("Couldn't query the power status")
+	}
+
+	toReturn.PowerStatus = toString(powerBytes)
+
+	// get the timer info
+	timerBytes, err := queryState("timer ?", address, true)
+	if err != nil {
+		return toReturn, err.Add("Couldn't query the timer information")
+	}
+
+	var timers []map[string]int
+
+	e = json.Unmarshal(timerBytes, &timers)
+	if e != nil {
+		return toReturn, nerr.Translate(e)
+	}
+
+	toReturn.TimerInfo = timers
 
 	return toReturn, nil
 }
