@@ -6,16 +6,17 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/byuoitav/common/log"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
 var homeTemplate = template.Must(template.ParseFiles("home.html"))
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
+	log.L.Infoln(r.URL)
 	if r.URL.Path != "/" {
 		http.Error(w, "Not found", 404)
 		return

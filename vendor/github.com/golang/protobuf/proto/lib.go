@@ -225,7 +225,7 @@ To create and play with a Test object:
 	package main
 
 	import (
-		"log"
+		"github.com/byuoitav/common/log"
 
 		"github.com/golang/protobuf/proto"
 		pb "./example.pb"
@@ -267,11 +267,12 @@ package proto
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 	"sort"
 	"strconv"
 	"sync"
+
+	"github.com/byuoitav/common/log"
 )
 
 // Message is implemented by generated protocol buffer messages.
@@ -651,7 +652,7 @@ func setDefaults(v reflect.Value, recur, zeros bool) {
 			}
 			*(fptr.(**uint64)) = u
 		default:
-			log.Printf("proto: can't set default for field %v (sf.kind=%v)", f, sf.kind)
+			log.L.Infof("proto: can't set default for field %v (sf.kind=%v)", f, sf.kind)
 		}
 	}
 
@@ -721,7 +722,7 @@ func buildDefaultMessage(t reflect.Type) (dm defaultMessage) {
 		sf, nested, err := fieldDefault(ft, prop)
 		switch {
 		case err != nil:
-			log.Print(err)
+			log.L.Info(err)
 		case nested:
 			dm.nested = append(dm.nested, fi)
 		case sf != nil:

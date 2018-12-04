@@ -37,13 +37,14 @@ package proto
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/byuoitav/common/log"
 )
 
 const debug bool = false
@@ -835,7 +836,7 @@ var (
 func RegisterType(x Message, name string) {
 	if _, ok := protoTypes[name]; ok {
 		// TODO: Some day, make this a panic.
-		log.Printf("proto: duplicate proto type registered: %s", name)
+		log.L.Infof("proto: duplicate proto type registered: %s", name)
 		return
 	}
 	t := reflect.TypeOf(x)

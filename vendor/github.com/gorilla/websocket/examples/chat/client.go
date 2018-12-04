@@ -6,9 +6,10 @@ package main
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 	"time"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/gorilla/websocket"
 )
@@ -65,7 +66,7 @@ func (c *Client) readPump() {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
-				log.Printf("error: %v", err)
+				log.L.Infof("error: %v", err)
 			}
 			break
 		}
@@ -124,7 +125,7 @@ func (c *Client) writePump() {
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.L.Infoln(err)
 		return
 	}
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}

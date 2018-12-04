@@ -18,7 +18,7 @@
 //  func handler(w http.ResponseWriter, r *http.Request) {
 //      conn, err := upgrader.Upgrade(w, r, nil)
 //      if err != nil {
-//          log.Println(err)
+//          log.L.Infoln(err)
 //          return
 //      }
 //      ... Use conn to send and receive messages.

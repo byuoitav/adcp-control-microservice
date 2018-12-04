@@ -11,7 +11,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -19,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
@@ -75,7 +76,7 @@ var logLevels = map[int64]string{
 }
 
 func (c *remoteContext) logf(level int64, format string, args ...interface{}) {
-	log.Printf(logLevels[level]+": "+format, args...)
+	log.L.Infof(logLevels[level]+": "+format, args...)
 }
 
 func (c *remoteContext) call(ctx context.Context, service, method string, in, out proto.Message) error {
