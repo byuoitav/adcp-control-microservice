@@ -185,10 +185,11 @@ func inputStatus(context echo.Context, pooled bool) error {
 	return context.JSON(http.StatusOK, status)
 }
 
-func hasActiveInput(context echo.Context, pooled bool) error {
+func hasActiveSignal(context echo.Context, pooled bool) error {
 	address := context.Param("address")
+	port := context.Param("port")
 
-	active, err := helpers.HasActiveInput(address, pooled)
+	active, err := helpers.HasActiveSignal(address, port, pooled)
 	if err != nil {
 		log.L.Warnf(err.Error())
 		return context.JSON(http.StatusInternalServerError, err.Error())

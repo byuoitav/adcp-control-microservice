@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"strings"
 
@@ -66,7 +67,13 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 		return toReturn, nerr.Translate(e)
 	}
 
-	toReturn.FirmwareVersion = firmware
+	var firmwareString strings.Builder
+	for _, f := range firmware {
+		for _, v := range f {
+			firmwareString.WriteString(fmt.Sprintf("%s$", strings.TrimSpace(v)))
+		}
+	}
+	toReturn.FirmwareVersion = strings.TrimSuffix(firmwareString.String(), "$")
 
 	// get the filter status
 	filterBytes, err := queryState("filter_status ?", address, true)
@@ -89,8 +96,6 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 		return toReturn, nerr.Translate(e)
 	}
 
-	toReturn.WarningStatus = warnings
-
 	// get the error status
 	errBytes, err := queryState("error ?", address, true)
 	if err != nil {
@@ -104,7 +109,14 @@ func GetHardwareInfo(address string, pooled bool) (structs.HardwareInfo, *nerr.E
 		return toReturn, nerr.Translate(e)
 	}
 
-	toReturn.ErrorStatus = errors
+	noWarnings, noErrors := noWarningsOrErrors(warnings, errors)
+
+	if !noWarnings {
+		toReturn.WarningStatus = warnings
+	}
+	if !noErrors {
+		toReturn.ErrorStatus = errors
+	}
 
 	// get the power status
 	powerBytes, err := queryState("power_status ?", address, true)
@@ -138,4 +150,18 @@ func toString(b []byte) string {
 
 func trim(s string) string {
 	return strings.Trim(s, "\"")
+}
+
+func noWarningsOrErrors(warns []string, errs []string) (warnings bool, errors bool) {
+	warnings = false
+	errors = false
+	if len(warns) == 1 {
+		warnings = strings.EqualFold(warns[0], "no_warn")
+	}
+
+	if len(errs) == 1 {
+		errors = strings.EqualFold(errs[0], "no_err")
+	}
+
+	return warnings, errors
 }

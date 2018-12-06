@@ -134,14 +134,14 @@ func InputStatus(context echo.Context) error {
 	return inputStatus(context, false)
 }
 
-// HasActiveInputPooled checks to see if the display has an active input when pooled
-func HasActiveInputPooled(context echo.Context) error {
-	return hasActiveInput(context, true)
+// HasActiveSignalPooled checks to see if the display has an active input when pooled
+func HasActiveSignalPooled(context echo.Context) error {
+	return hasActiveSignal(context, true)
 }
 
-// HasActiveInput checks to see if the display has an active input
-func HasActiveInput(context echo.Context) error {
-	return hasActiveInput(context, false)
+// HasActiveSignal checks to see if the display has an active input
+func HasActiveSignal(context echo.Context) error {
+	return hasActiveSignal(context, false)
 }
 
 // GetHardwareInfoPooled obtains the hardware information when pooled
