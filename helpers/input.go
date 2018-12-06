@@ -60,17 +60,26 @@ func GetInputStatus(address string, pooled bool) (status.Input, *nerr.E) {
 
 // HasActiveSignal checks to see if the projector has an active signal on the given port currently.
 func HasActiveSignal(address string, port string, pooled bool) (structs.ActiveSignal, *nerr.E) {
-	log.L.Debugf("Checking if %s has an active input right now", address)
+	log.L.Debugf("Checking if %s has an active signal right now", address)
 
 	var toReturn structs.ActiveSignal
+	toReturn.Active = false
 
-	response, err := queryState("signal ?", address, pooled)
+	input, err := GetInputStatus(address, false)
 	if err != nil {
-		return toReturn, err.Add("Couldn't get active signal")
+		return toReturn, err.Add("couldn't query the input status")
 	}
 
-	active := strings.Trim(string(response), "\"")
+	if strings.EqualFold(input.Input, port) {
+		response, err := queryState("signal ?", address, pooled)
+		if err != nil {
+			return toReturn, err.Add("Couldn't get active signal")
+		}
 
-	toReturn.Active = strings.EqualFold(active, port)
+		active := strings.Trim(string(response), "\"")
+
+		toReturn.Active = !strings.EqualFold(active, "Invalid")
+	}
+
 	return toReturn, nil
 }
