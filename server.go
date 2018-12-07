@@ -34,7 +34,7 @@ func main() {
 	read.GET("/:address/power/status", handlers.PowerStatus)
 	read.GET("/:address/display/status", handlers.BlankedStatus)
 	read.GET("/:address/input/current", handlers.InputStatus)
-	read.GET("/:address/input/:port/active", handlers.HasActiveSignal)
+	read.GET("/:address/active/:port", handlers.HasActiveSignal)
 	read.GET("/:address/hardware", handlers.GetHardwareInfo)
 
 	//------------------
@@ -55,7 +55,7 @@ func main() {
 	read.GET("/pooled/:address/power/status", handlers.PowerStatusPooled)
 	read.GET("/pooled/:address/display/status", handlers.BlankedStatusPooled)
 	read.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
-	read.GET("/pooled/:address/input/:port/active", handlers.HasActiveSignalPooled)
+	read.GET("/pooled/:address/active/:port", handlers.HasActiveSignalPooled)
 	read.GET("/pooled/:address/hardware", handlers.GetHardwareInfoPooled)
 
 	router.PUT("/log-level/:level", log.SetLogLevel)
