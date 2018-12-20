@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/byuoitav/common/status"
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/nerr"
+	"github.com/byuoitav/common/status"
+	"github.com/byuoitav/common/structs"
 )
 
 var validADCPInputs = []string{
@@ -55,4 +56,30 @@ func GetInputStatus(address string, pooled bool) (status.Input, *nerr.E) {
 		Input: strings.Trim(string(response), "\""),
 	}
 	return status, nil
+}
+
+// HasActiveSignal checks to see if the projector has an active signal on the given port currently.
+func HasActiveSignal(address string, port string, pooled bool) (structs.ActiveSignal, *nerr.E) {
+	log.L.Debugf("Checking if %s has an active signal right now", address)
+
+	var toReturn structs.ActiveSignal
+	toReturn.Active = false
+
+	input, err := GetInputStatus(address, false)
+	if err != nil {
+		return toReturn, err.Add("couldn't query the input status")
+	}
+
+	if strings.EqualFold(input.Input, port) {
+		response, err := queryState("signal ?", address, pooled)
+		if err != nil {
+			return toReturn, err.Add("Couldn't get active signal")
+		}
+
+		active := strings.Trim(string(response), "\"")
+
+		toReturn.Active = !strings.EqualFold(active, "Invalid")
+	}
+
+	return toReturn, nil
 }

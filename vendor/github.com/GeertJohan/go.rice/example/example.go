@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"text/template"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/GeertJohan/go.rice"
 	"github.com/davecgh/go-spew/spew"
@@ -26,13 +27,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not read file contents as string: %s\n", err)
 	}
-	log.Printf("Read some file contents as string:\n%s\n", contentString)
+	log.L.Infof("Read some file contents as string:\n%s\n", contentString)
 
 	contentBytes, err := box.Bytes("file.txt")
 	if err != nil {
 		log.Fatalf("could not read file contents as byteSlice: %s\n", err)
 	}
-	log.Printf("Read some file contents as byteSlice:\n%s\n", hex.Dump(contentBytes))
+	log.L.Infof("Read some file contents as byteSlice:\n%s\n", hex.Dump(contentBytes))
 
 	file, err := box.Open("file.txt")
 	if err != nil {

@@ -7,12 +7,13 @@ package main
 import (
 	"flag"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"text/template"
 	"time"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/gorilla/websocket"
 )
@@ -114,7 +115,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		if _, ok := err.(websocket.HandshakeError); !ok {
-			log.Println(err)
+			log.L.Infoln(err)
 		}
 		return
 	}

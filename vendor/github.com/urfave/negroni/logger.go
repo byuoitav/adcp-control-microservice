@@ -1,10 +1,11 @@
 package negroni
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/byuoitav/common/log"
 )
 
 // ALogger interface

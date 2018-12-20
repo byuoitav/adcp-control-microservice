@@ -1,8 +1,9 @@
 package helpers
 
 import (
-	"log"
 	"strings"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/byuoitav/common/nerr"
 	"github.com/byuoitav/common/status"
@@ -10,14 +11,14 @@ import (
 )
 
 func PowerOn(address string, pooled bool) *nerr.E {
-	log.Printf("Setting power of %v to on", address)
+	log.L.Infof("Setting power of %v to on", address)
 	command := "power \"on\""
 
 	return sendCommand(command, address, pooled)
 }
 
 func PowerStandby(address string, pooled bool) *nerr.E {
-	log.Printf("Seting power of %v to off", address)
+	log.L.Infof("Seting power of %v to off", address)
 	command := "power \"off\""
 
 	return sendCommand(command, address, pooled)
@@ -25,7 +26,7 @@ func PowerStandby(address string, pooled bool) *nerr.E {
 
 func GetPower(address string, pooled bool) (status.Power, *nerr.E) {
 
-	log.Printf("%s", color.HiCyanString("[helpers] querying power state of %v", address))
+	log.L.Infof("%s", color.HiCyanString("[helpers] querying power state of %v", address))
 
 	response, err := queryState("power_status ?", address, pooled)
 	if err != nil {
