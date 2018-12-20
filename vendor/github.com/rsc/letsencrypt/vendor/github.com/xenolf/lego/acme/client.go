@@ -9,12 +9,13 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/byuoitav/common/log"
 )
 
 var (
@@ -28,7 +29,7 @@ func logf(format string, args ...interface{}) {
 	if Logger != nil {
 		Logger.Printf(format, args...)
 	} else {
-		log.Printf(format, args...)
+		log.L.Infof(format, args...)
 	}
 }
 

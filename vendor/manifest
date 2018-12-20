@@ -166,7 +166,7 @@
 			"vcs": "git",
 			"revision": "9a43ff0d261e0e65594422e9eee08cf301aabbe7",
 			"branch": "master",
-			"path": "log",
+			"path": "github.com/byuoitav/common/log",
 			"notests": true
 		},
 		{

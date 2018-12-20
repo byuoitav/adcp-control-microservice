@@ -8,12 +8,13 @@ import (
 	"bufio"
 	"flag"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"text/template"
 	"time"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/gorilla/websocket"
 )
@@ -70,7 +71,7 @@ func pumpStdout(ws *websocket.Conn, r io.Reader, done chan struct{}) {
 		}
 	}
 	if s.Err() != nil {
-		log.Println("scan:", s.Err())
+		log.L.Infoln("scan:", s.Err())
 	}
 	close(done)
 
@@ -87,7 +88,7 @@ func ping(ws *websocket.Conn, done chan struct{}) {
 		select {
 		case <-ticker.C:
 			if err := ws.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(writeWait)); err != nil {
-				log.Println("ping:", err)
+				log.L.Infoln("ping:", err)
 			}
 		case <-done:
 			return
@@ -96,7 +97,7 @@ func ping(ws *websocket.Conn, done chan struct{}) {
 }
 
 func internalError(ws *websocket.Conn, msg string, err error) {
-	log.Println(msg, err)
+	log.L.Infoln(msg, err)
 	ws.WriteMessage(websocket.TextMessage, []byte("Internal server error."))
 }
 
@@ -105,7 +106,7 @@ var upgrader = websocket.Upgrader{}
 func serveWs(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("upgrade:", err)
+		log.L.Infoln("upgrade:", err)
 		return
 	}
 
@@ -149,7 +150,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 
 	// Other commands need a bonk on the head.
 	if err := proc.Signal(os.Interrupt); err != nil {
-		log.Println("inter:", err)
+		log.L.Infoln("inter:", err)
 	}
 
 	select {
@@ -157,13 +158,13 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	case <-time.After(time.Second):
 		// A bigger bonk on the head.
 		if err := proc.Signal(os.Kill); err != nil {
-			log.Println("term:", err)
+			log.L.Infoln("term:", err)
 		}
 		<-stdoutDone
 	}
 
 	if _, err := proc.Wait(); err != nil {
-		log.Println("wait:", err)
+		log.L.Infoln("wait:", err)
 	}
 }
 

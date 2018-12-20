@@ -9,10 +9,11 @@ import (
 	"errors"
 	"flag"
 	"io"
-	"log"
 	"net/http"
 	"time"
 	"unicode/utf8"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/gorilla/websocket"
 )
@@ -30,7 +31,7 @@ var upgrader = websocket.Upgrader{
 func echoCopy(w http.ResponseWriter, r *http.Request, writerOnly bool) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("Upgrade:", err)
+		log.L.Infoln("Upgrade:", err)
 		return
 	}
 	defer conn.Close()
@@ -38,7 +39,7 @@ func echoCopy(w http.ResponseWriter, r *http.Request, writerOnly bool) {
 		mt, r, err := conn.NextReader()
 		if err != nil {
 			if err != io.EOF {
-				log.Println("NextReader:", err)
+				log.L.Infoln("NextReader:", err)
 			}
 			return
 		}
@@ -47,7 +48,7 @@ func echoCopy(w http.ResponseWriter, r *http.Request, writerOnly bool) {
 		}
 		w, err := conn.NextWriter(mt)
 		if err != nil {
-			log.Println("NextWriter:", err)
+			log.L.Infoln("NextWriter:", err)
 			return
 		}
 		if mt == websocket.TextMessage {
@@ -64,12 +65,12 @@ func echoCopy(w http.ResponseWriter, r *http.Request, writerOnly bool) {
 					websocket.FormatCloseMessage(websocket.CloseInvalidFramePayloadData, ""),
 					time.Time{})
 			}
-			log.Println("Copy:", err)
+			log.L.Infoln("Copy:", err)
 			return
 		}
 		err = w.Close()
 		if err != nil {
-			log.Println("Close:", err)
+			log.L.Infoln("Close:", err)
 			return
 		}
 	}
@@ -88,7 +89,7 @@ func echoCopyFull(w http.ResponseWriter, r *http.Request) {
 func echoReadAll(w http.ResponseWriter, r *http.Request, writeMessage bool) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("Upgrade:", err)
+		log.L.Infoln("Upgrade:", err)
 		return
 	}
 	defer conn.Close()
@@ -96,7 +97,7 @@ func echoReadAll(w http.ResponseWriter, r *http.Request, writeMessage bool) {
 		mt, b, err := conn.ReadMessage()
 		if err != nil {
 			if err != io.EOF {
-				log.Println("NextReader:", err)
+				log.L.Infoln("NextReader:", err)
 			}
 			return
 		}
@@ -105,26 +106,26 @@ func echoReadAll(w http.ResponseWriter, r *http.Request, writeMessage bool) {
 				conn.WriteControl(websocket.CloseMessage,
 					websocket.FormatCloseMessage(websocket.CloseInvalidFramePayloadData, ""),
 					time.Time{})
-				log.Println("ReadAll: invalid utf8")
+				log.L.Infoln("ReadAll: invalid utf8")
 			}
 		}
 		if writeMessage {
 			err = conn.WriteMessage(mt, b)
 			if err != nil {
-				log.Println("WriteMessage:", err)
+				log.L.Infoln("WriteMessage:", err)
 			}
 		} else {
 			w, err := conn.NextWriter(mt)
 			if err != nil {
-				log.Println("NextWriter:", err)
+				log.L.Infoln("NextWriter:", err)
 				return
 			}
 			if _, err := w.Write(b); err != nil {
-				log.Println("Writer:", err)
+				log.L.Infoln("Writer:", err)
 				return
 			}
 			if err := w.Close(); err != nil {
-				log.Println("Close:", err)
+				log.L.Infoln("Close:", err)
 				return
 			}
 		}

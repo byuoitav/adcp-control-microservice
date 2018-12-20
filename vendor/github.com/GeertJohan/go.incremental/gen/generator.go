@@ -1,10 +1,11 @@
 package main
 
 import (
-	"log"
 	"os"
 	"strings"
 	"text/template"
+
+	"github.com/byuoitav/common/log"
 )
 
 var (

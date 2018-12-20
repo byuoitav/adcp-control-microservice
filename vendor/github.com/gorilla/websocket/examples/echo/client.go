@@ -8,11 +8,12 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/url"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/gorilla/websocket"
 )
@@ -27,7 +28,7 @@ func main() {
 	signal.Notify(interrupt, os.Interrupt)
 
 	u := url.URL{Scheme: "ws", Host: *addr, Path: "/echo"}
-	log.Printf("connecting to %s", u.String())
+	log.L.Infof("connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
@@ -43,10 +44,10 @@ func main() {
 		for {
 			_, message, err := c.ReadMessage()
 			if err != nil {
-				log.Println("read:", err)
+				log.L.Infoln("read:", err)
 				return
 			}
-			log.Printf("recv: %s", message)
+			log.L.Infof("recv: %s", message)
 		}
 	}()
 
@@ -58,16 +59,16 @@ func main() {
 		case t := <-ticker.C:
 			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
 			if err != nil {
-				log.Println("write:", err)
+				log.L.Infoln("write:", err)
 				return
 			}
 		case <-interrupt:
-			log.Println("interrupt")
+			log.L.Infoln("interrupt")
 			// To cleanly close a connection, a client should send a close
 			// frame and wait for the server to close the connection.
 			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
-				log.Println("write close:", err)
+				log.L.Infoln("write close:", err)
 				return
 			}
 			select {
