@@ -19,11 +19,12 @@ import (
 	"go/build"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/byuoitav/common/log"
 )
 
 var (
@@ -47,7 +48,7 @@ func vlogf(f string, v ...interface{}) {
 	if !verbose {
 		return
 	}
-	log.Printf("[aedeploy] "+f, v...)
+	log.L.Infof("[aedeploy] "+f, v...)
 }
 
 func main() {

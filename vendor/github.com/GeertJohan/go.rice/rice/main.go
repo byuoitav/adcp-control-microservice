@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"go/build"
-	"log"
 	"os"
+
+	"github.com/byuoitav/common/log"
 )
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 			operationEmbedGo(pkg)
 		}
 	case "embed-syso":
-		log.Println("WARNING: embedding .syso is experimental..")
+		log.L.Infoln("WARNING: embedding .syso is experimental..")
 		for _, pkg := range pkgs {
 			operationEmbedSyso(pkg)
 		}
@@ -63,6 +64,6 @@ func pkgForPath(path string) *build.Package {
 
 func verbosef(format string, stuff ...interface{}) {
 	if flags.Verbose {
-		log.Printf(format, stuff...)
+		log.L.Infof(format, stuff...)
 	}
 }

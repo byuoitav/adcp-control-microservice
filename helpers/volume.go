@@ -2,10 +2,11 @@ package helpers
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/byuoitav/common/nerr"
 	se "github.com/byuoitav/common/status"
@@ -16,7 +17,7 @@ type Mute struct {
 }
 
 func SetVolume(address string, volumeLevel int, pooled bool) *nerr.E {
-	log.Printf("Setting volume of %s to %v", address, volumeLevel)
+	log.L.Infof("Setting volume of %s to %v", address, volumeLevel)
 
 	if volumeLevel > 100 || volumeLevel < 0 {
 		return nerr.Create(fmt.Sprintf("Invalid volume level %v: must be in range 0-100", volumeLevel), "params")
@@ -28,7 +29,7 @@ func SetVolume(address string, volumeLevel int, pooled bool) *nerr.E {
 
 func GetVolumeLevel(address string, pooled bool) (se.Volume, *nerr.E) {
 
-	log.Printf("Querying volume of %s", address)
+	log.L.Infof("Querying volume of %s", address)
 
 	resp, err := queryState("volume ?", address, pooled)
 	if err != nil {
@@ -49,10 +50,10 @@ func SetMute(address string, muted bool, pooled bool) *nerr.E {
 
 	var command string
 	if muted {
-		log.Printf("Muting %s", address)
+		log.L.Infof("Muting %s", address)
 		command = "muting \"on\""
 	} else {
-		log.Printf("Un-muting %s", address)
+		log.L.Infof("Un-muting %s", address)
 		command = "muting \"off\""
 	}
 
@@ -66,7 +67,7 @@ func SetMute(address string, muted bool, pooled bool) *nerr.E {
 
 func GetMute(address string, pooled bool) (se.Mute, *nerr.E) {
 
-	log.Printf("Querying mute status of %s", address)
+	log.L.Infof("Querying mute status of %s", address)
 
 	resp, err := queryState("muting ?", address, pooled)
 	if err != nil {

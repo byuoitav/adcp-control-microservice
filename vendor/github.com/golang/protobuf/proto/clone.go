@@ -35,9 +35,10 @@
 package proto
 
 import (
-	"log"
 	"reflect"
 	"strings"
+
+	"github.com/byuoitav/common/log"
 )
 
 // Clone returns a deep copy of a protocol buffer.
@@ -207,7 +208,7 @@ func mergeAny(out, in reflect.Value, viaPtr bool, prop *Properties) {
 		mergeStruct(out, in)
 	default:
 		// unknown type, so not a protocol buffer
-		log.Printf("proto: don't know how to copy %v", in)
+		log.L.Infof("proto: don't know how to copy %v", in)
 	}
 }
 

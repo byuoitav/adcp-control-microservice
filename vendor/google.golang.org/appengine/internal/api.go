@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -22,6 +21,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/golang/protobuf/proto"
 	netcontext "golang.org/x/net/context"
@@ -586,7 +587,7 @@ func logf(c *context, level int64, format string, args ...interface{}) {
 		Level:         &level,
 		Message:       &s,
 	})
-	log.Print(logLevelName[level] + ": " + s)
+	log.L.Info(logLevelName[level] + ": " + s)
 }
 
 // flushLog attempts to flush any pending logs to the appserver.
@@ -626,7 +627,7 @@ func (c *context) flushLog(force bool) (flushed bool) {
 		LogLine: lines,
 	})
 	if err != nil {
-		log.Printf("internal.flushLog: marshaling UserAppLogGroup: %v", err)
+		log.L.Infof("internal.flushLog: marshaling UserAppLogGroup: %v", err)
 		rescueLogs = true
 		return false
 	}
@@ -639,7 +640,7 @@ func (c *context) flushLog(force bool) (flushed bool) {
 	c.pendingLogs.flushes++
 	c.pendingLogs.Unlock()
 	if err := Call(toContext(c), "logservice", "Flush", req, res); err != nil {
-		log.Printf("internal.flushLog: Flush RPC: %v", err)
+		log.L.Infof("internal.flushLog: Flush RPC: %v", err)
 		rescueLogs = true
 		return false
 	}

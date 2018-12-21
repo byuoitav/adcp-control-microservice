@@ -2,11 +2,12 @@ package negroni
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"runtime"
 	"runtime/debug"
+
+	"github.com/byuoitav/common/log"
 )
 
 // Recovery is a Negroni middleware that recovers from any panics and writes a 500 if there was one.

@@ -12,7 +12,6 @@ import (
 )
 
 func setVolume(context echo.Context, pooled bool) error {
-
 	address := context.Param("address")
 	volumeLevel := context.Param("level")
 
@@ -127,7 +126,6 @@ func setInputPort(context echo.Context, pooled bool) error {
 }
 
 func volumeLevel(context echo.Context, pooled bool) error {
-
 	address := context.Param("address")
 
 	level, err := helpers.GetVolumeLevel(address, pooled)
@@ -140,7 +138,6 @@ func volumeLevel(context echo.Context, pooled bool) error {
 }
 
 func muteStatus(context echo.Context, pooled bool) error {
-
 	address := context.Param("address")
 
 	status, err := helpers.GetMute(address, pooled)
@@ -153,7 +150,6 @@ func muteStatus(context echo.Context, pooled bool) error {
 }
 
 func powerStatus(context echo.Context, pooled bool) error {
-
 	address := context.Param("address")
 
 	status, err := helpers.GetPower(address, pooled)
@@ -187,4 +183,29 @@ func inputStatus(context echo.Context, pooled bool) error {
 	}
 
 	return context.JSON(http.StatusOK, status)
+}
+
+func hasActiveSignal(context echo.Context, pooled bool) error {
+	address := context.Param("address")
+	port := context.Param("port")
+
+	active, err := helpers.HasActiveSignal(address, port, pooled)
+	if err != nil {
+		log.L.Warnf(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, active)
+}
+
+func getHardwareInfo(context echo.Context, pooled bool) error {
+	address := context.Param("address")
+
+	hardware, err := helpers.GetHardwareInfo(address, pooled)
+	if err != nil {
+		log.L.Warnf(err.Error())
+		return context.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, hardware)
 }

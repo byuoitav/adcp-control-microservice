@@ -9,8 +9,9 @@ package main
 import (
 	"flag"
 	"html/template"
-	"log"
 	"net/http"
+
+	"github.com/byuoitav/common/log"
 
 	"github.com/gorilla/websocket"
 )
@@ -22,20 +23,20 @@ var upgrader = websocket.Upgrader{} // use default options
 func echo(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Print("upgrade:", err)
+		log.L.Info("upgrade:", err)
 		return
 	}
 	defer c.Close()
 	for {
 		mt, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
+			log.L.Infoln("read:", err)
 			break
 		}
-		log.Printf("recv: %s", message)
+		log.L.Infof("recv: %s", message)
 		err = c.WriteMessage(mt, message)
 		if err != nil {
-			log.Println("write:", err)
+			log.L.Infoln("write:", err)
 			break
 		}
 	}

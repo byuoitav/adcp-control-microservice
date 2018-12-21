@@ -35,9 +35,10 @@ package proto
 
 import (
 	"bytes"
-	"log"
 	"reflect"
 	"strings"
+
+	"github.com/byuoitav/common/log"
 )
 
 /*
@@ -236,7 +237,7 @@ func equalAny(v1, v2 reflect.Value, prop *Properties) bool {
 	}
 
 	// unknown type, so not a protocol buffer
-	log.Printf("proto: don't know how to compare %v", v1)
+	log.L.Infof("proto: don't know how to compare %v", v1)
 	return false
 }
 
@@ -276,7 +277,7 @@ func equalExtMap(base reflect.Type, em1, em2 map[int32]Extension) bool {
 			desc = m[extNum]
 		}
 		if desc == nil {
-			log.Printf("proto: don't know how to compare extension %d of %v", extNum, base)
+			log.L.Infof("proto: don't know how to compare extension %d of %v", extNum, base)
 			continue
 		}
 		var err error
@@ -288,7 +289,7 @@ func equalExtMap(base reflect.Type, em1, em2 map[int32]Extension) bool {
 		}
 		if err != nil {
 			// The encoded form is invalid.
-			log.Printf("proto: badly encoded extension %d of %v: %v", extNum, base, err)
+			log.L.Infof("proto: badly encoded extension %d of %v: %v", extNum, base, err)
 			return false
 		}
 		if !equalAny(reflect.ValueOf(m1), reflect.ValueOf(m2), nil) {

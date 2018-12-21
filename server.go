@@ -4,64 +4,62 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/adcp-control-microservice/handlers"
-	"github.com/byuoitav/authmiddleware"
+	"github.com/byuoitav/common"
 	"github.com/byuoitav/common/log"
+	"github.com/byuoitav/common/v2/auth"
 	"github.com/byuoitav/hateoas"
-	"github.com/jessemillar/health"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func main() {
-
 	port := ":8012"
-	router := echo.New()
-	router.Pre(middleware.RemoveTrailingSlash())
-	router.Use(middleware.CORS())
-
-	// Use the `secure` routing group to require authentication
-	secure := router.Group("", echo.WrapMiddleware(authmiddleware.Authenticate))
-
+	router := common.NewRouter()
 	router.GET("/", echo.WrapHandler(http.HandlerFunc(hateoas.RootResponse)))
-	router.GET("/health", echo.WrapHandler(http.HandlerFunc(health.Check)))
 
-	secure.GET("/:address/volume/set/:level", handlers.SetVolume)
-	secure.GET("/:address/power/on", handlers.PowerOn)
-	secure.GET("/:address/power/standby", handlers.PowerStandby)
-	secure.GET("/:address/volume/mute", handlers.Mute)
-	secure.GET("/:address/volume/unmute", handlers.UnMute)
-	secure.GET("/:address/display/blank", handlers.DisplayBlank)
-	secure.GET("/:address/display/unblank", handlers.DisplayUnBlank)
-	secure.GET("/:address/input/:port", handlers.SetInputPort)
+	write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
+	read := router.Group("", auth.AuthorizeRequest("read-state", "room", auth.LookupResourceFromAddress))
+
+	write.GET("/:address/volume/set/:level", handlers.SetVolume)
+	write.GET("/:address/power/on", handlers.PowerOn)
+	write.GET("/:address/power/standby", handlers.PowerStandby)
+	write.GET("/:address/volume/mute", handlers.Mute)
+	write.GET("/:address/volume/unmute", handlers.UnMute)
+	write.GET("/:address/display/blank", handlers.DisplayBlank)
+	write.GET("/:address/display/unblank", handlers.DisplayUnBlank)
+	write.GET("/:address/input/:port", handlers.SetInputPort)
 
 	//status endpoints
-	secure.GET("/:address/volume/level", handlers.VolumeLevel)
-	secure.GET("/:address/volume/mute/status", handlers.MuteStatus)
-	secure.GET("/:address/power/status", handlers.PowerStatus)
-	secure.GET("/:address/display/status", handlers.BlankedStatus)
-	secure.GET("/:address/input/current", handlers.InputStatus)
+	read.GET("/:address/volume/level", handlers.VolumeLevel)
+	read.GET("/:address/volume/mute/status", handlers.MuteStatus)
+	read.GET("/:address/power/status", handlers.PowerStatus)
+	read.GET("/:address/display/status", handlers.BlankedStatus)
+	read.GET("/:address/input/current", handlers.InputStatus)
+	read.GET("/:address/active/:port", handlers.HasActiveSignal)
+	read.GET("/:address/hardware", handlers.GetHardwareInfo)
 
 	//------------------
 	//Pooled endpoints
 	//------------------
-	secure.GET("/pooled/:address/volume/set/:level", handlers.SetVolumePooled)
-	secure.GET("/pooled/:address/power/on", handlers.PowerOnPooled)
-	secure.GET("/pooled/:address/power/standby", handlers.PowerStandbyPooled)
-	secure.GET("/pooled/:address/volume/mute", handlers.MutePooled)
-	secure.GET("/pooled/:address/volume/unmute", handlers.UnMutePooled)
-	secure.GET("/pooled/:address/display/blank", handlers.DisplayBlankPooled)
-	secure.GET("/pooled/:address/display/unblank", handlers.DisplayUnBlankPooled)
-	secure.GET("/pooled/:address/input/:port", handlers.SetInputPortPooled)
+	write.GET("/pooled/:address/volume/set/:level", handlers.SetVolumePooled)
+	write.GET("/pooled/:address/power/on", handlers.PowerOnPooled)
+	write.GET("/pooled/:address/power/standby", handlers.PowerStandbyPooled)
+	write.GET("/pooled/:address/volume/mute", handlers.MutePooled)
+	write.GET("/pooled/:address/volume/unmute", handlers.UnMutePooled)
+	write.GET("/pooled/:address/display/blank", handlers.DisplayBlankPooled)
+	write.GET("/pooled/:address/display/unblank", handlers.DisplayUnBlankPooled)
+	write.GET("/pooled/:address/input/:port", handlers.SetInputPortPooled)
 
 	//status endpoints
-	secure.GET("/pooled/:address/volume/level", handlers.VolumeLevelPooled)
-	secure.GET("/pooled/:address/volume/mute/status", handlers.MuteStatusPooled)
-	secure.GET("/pooled/:address/power/status", handlers.PowerStatusPooled)
-	secure.GET("/pooled/:address/display/status", handlers.BlankedStatusPooled)
-	secure.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
+	read.GET("/pooled/:address/volume/level", handlers.VolumeLevelPooled)
+	read.GET("/pooled/:address/volume/mute/status", handlers.MuteStatusPooled)
+	read.GET("/pooled/:address/power/status", handlers.PowerStatusPooled)
+	read.GET("/pooled/:address/display/status", handlers.BlankedStatusPooled)
+	read.GET("/pooled/:address/input/current", handlers.InputStatusPooled)
+	read.GET("/pooled/:address/active/:port", handlers.HasActiveSignalPooled)
+	read.GET("/pooled/:address/hardware", handlers.GetHardwareInfoPooled)
 
-	secure.PUT("/log-level/:level", log.SetLogLevel)
-	secure.GET("/log-level", log.GetLogLevel)
+	router.PUT("/log-level/:level", log.SetLogLevel)
+	router.GET("/log-level", log.GetLogLevel)
 
 	server := http.Server{
 		Addr:           port,

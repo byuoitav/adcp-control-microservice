@@ -12,9 +12,10 @@ package internal
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
+
+	"github.com/byuoitav/common/log"
 )
 
 const (

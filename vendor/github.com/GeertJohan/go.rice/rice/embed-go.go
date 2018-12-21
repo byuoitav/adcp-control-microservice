@@ -7,10 +7,11 @@ import (
 	"go/format"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/byuoitav/common/log"
 )
 
 const boxFilename = "rice-box.go"
@@ -129,21 +130,21 @@ func operationEmbedGo(pkg *build.Package) {
 		embedFileDataType{pkg.Name, boxes},
 	)
 	if err != nil {
-		log.Printf("error writing embedded box to file (template execute): %s\n", err)
+		log.L.Infof("error writing embedded box to file (template execute): %s\n", err)
 		os.Exit(1)
 	}
 
 	// format the source code
 	embedSource, err := format.Source(embedSourceUnformated.Bytes())
 	if err != nil {
-		log.Printf("error formatting embedSource: %s\n", err)
+		log.L.Infof("error formatting embedSource: %s\n", err)
 		os.Exit(1)
 	}
 
 	// create go file for box
 	boxFile, err := os.Create(filepath.Join(pkg.Dir, boxFilename))
 	if err != nil {
-		log.Printf("error creating embedded box file: %s\n", err)
+		log.L.Infof("error creating embedded box file: %s\n", err)
 		os.Exit(1)
 	}
 	defer boxFile.Close()
@@ -151,7 +152,7 @@ func operationEmbedGo(pkg *build.Package) {
 	// write source to file
 	_, err = io.Copy(boxFile, bytes.NewBuffer(embedSource))
 	if err != nil {
-		log.Printf("error writing embedSource to file: %s\n", err)
+		log.L.Infof("error writing embedSource to file: %s\n", err)
 		os.Exit(1)
 	}
 

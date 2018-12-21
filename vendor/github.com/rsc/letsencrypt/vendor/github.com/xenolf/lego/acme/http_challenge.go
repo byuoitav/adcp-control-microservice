@@ -2,7 +2,8 @@ package acme
 
 import (
 	"fmt"
-	"log"
+
+	"github.com/byuoitav/common/log"
 )
 
 type httpChallenge struct {
@@ -33,7 +34,7 @@ func (s *httpChallenge) Solve(chlng challenge, domain string) error {
 	defer func() {
 		err := s.provider.CleanUp(domain, chlng.Token, keyAuth)
 		if err != nil {
-			log.Printf("[%s] error cleaning up: %v", domain, err)
+			log.L.Infof("[%s] error cleaning up: %v", domain, err)
 		}
 	}()
 

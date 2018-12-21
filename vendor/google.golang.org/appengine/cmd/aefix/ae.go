@@ -139,7 +139,7 @@ func aeFn(f *ast.File) bool {
 				addImport(f, mapPackage("appengine/log"))
 				sel.X = &ast.Ident{ // ast.NewIdent doesn't preserve the position.
 					NamePos: sel.X.Pos(),
-					Name:    "log",
+					Name:    "github.com/byuoitav/common/log",
 				}
 				insertContext(f, call, lastContext)
 				fixed = true

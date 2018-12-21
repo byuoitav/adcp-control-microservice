@@ -2,7 +2,6 @@ package graceful
 
 import (
 	"crypto/tls"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -10,6 +9,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/byuoitav/common/log"
 )
 
 // Server wraps an http.Server with graceful connection handling.

@@ -1,0 +1,11 @@
+{
+    "name": "adcp-control-microservice",
+    "port": ":8012",
+    "env-vars": [
+        "BYPASS_AUTH",
+        "ENDPOINT_ACCESS_KEY",
+        "ENDPOINT_AUTHORIZATION_URL",
+        "ENDPOINT_USERNAME",
+        "SYSTEM_ID"
+    ]
+}
