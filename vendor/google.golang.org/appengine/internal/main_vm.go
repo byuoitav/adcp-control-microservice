@@ -8,10 +8,11 @@ package internal
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/byuoitav/common/log"
 )
 
 func Main() {

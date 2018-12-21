@@ -1,9 +1,10 @@
 package negroni
 
 import (
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/byuoitav/common/log"
 )
 
 // Handler handler is an interface that objects can implement to be registered to serve as middleware

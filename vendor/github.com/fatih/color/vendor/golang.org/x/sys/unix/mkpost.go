@@ -15,9 +15,10 @@ import (
 	"fmt"
 	"go/format"
 	"io/ioutil"
-	"log"
 	"os"
 	"regexp"
+
+	"github.com/byuoitav/common/log"
 )
 
 func main() {

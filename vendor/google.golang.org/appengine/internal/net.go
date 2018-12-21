@@ -8,11 +8,12 @@ package internal
 // It is only used for API calls.
 
 import (
-	"log"
 	"net"
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/byuoitav/common/log"
 )
 
 var limitSem = make(chan int, 100) // TODO(dsymonds): Use environment variable.
@@ -23,7 +24,7 @@ func limitRelease() {
 	case <-limitSem:
 	default:
 		// This should not normally happen.
-		log.Print("appengine: unbalanced limitSem release!")
+		log.L.Info("appengine: unbalanced limitSem release!")
 	}
 }
 

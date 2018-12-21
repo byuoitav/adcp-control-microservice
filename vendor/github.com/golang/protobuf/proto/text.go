@@ -40,11 +40,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"math"
 	"reflect"
 	"sort"
 	"strings"
+
+	"github.com/byuoitav/common/log"
 )
 
 var (
@@ -154,7 +155,7 @@ func (w *textWriter) indent() { w.ind++ }
 
 func (w *textWriter) unindent() {
 	if w.ind == 0 {
-		log.Print("proto: textWriter unindented too far")
+		log.L.Info("proto: textWriter unindented too far")
 		return
 	}
 	w.ind--

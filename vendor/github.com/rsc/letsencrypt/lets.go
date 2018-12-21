@@ -42,7 +42,7 @@
 //
 //	import (
 //		"fmt"
-//		"log"
+//		"github.com/byuoitav/common/log"
 //		"net/http"
 //		"rsc.io/letsencrypt"
 //	)
@@ -181,13 +181,14 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"os"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/byuoitav/common/log"
 
 	"golang.org/x/net/context"
 	"golang.org/x/time/rate"
@@ -362,7 +363,7 @@ func (m *Manager) CacheFile(name string) error {
 		for range m.Watch() {
 			err := ioutil.WriteFile(name, []byte(m.Marshal()), 0600)
 			if err != nil {
-				log.Printf("writing letsencrypt cache: %v", err)
+				log.L.Infof("writing letsencrypt cache: %v", err)
 			}
 		}
 	}()
@@ -482,7 +483,7 @@ func (m *Manager) Unmarshal(enc string) error {
 	for host, cert := range m.state.Certs {
 		c, err := cert.toTLS()
 		if err != nil {
-			log.Printf("letsencrypt: ignoring entry for %s: %v", host, err)
+			log.L.Infof("letsencrypt: ignoring entry for %s: %v", host, err)
 			continue
 		}
 		m.certCache[host] = &cacheEntry{host: host, m: m, cert: c}
@@ -523,7 +524,7 @@ func (m *Manager) GetCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certifi
 	host := clientHello.ServerName
 
 	if debug {
-		log.Printf("GetCertificate %s", host)
+		log.L.Infof("GetCertificate %s", host)
 	}
 
 	if strings.HasSuffix(host, ".acme.invalid") {
@@ -551,7 +552,7 @@ func (m *Manager) GetCertificate(clientHello *tls.ClientHelloInfo) (*tls.Certifi
 func (m *Manager) Cert(host string) (*tls.Certificate, error) {
 	host = strings.ToLower(host)
 	if debug {
-		log.Printf("Cert %s", host)
+		log.L.Infof("Cert %s", host)
 	}
 
 	m.init()
@@ -674,7 +675,7 @@ func (m *Manager) verify(host string) (cert *tls.Certificate, refreshTime time.T
 	acmeCert, errmap := c.ObtainCertificate([]string{host}, true, nil)
 	if len(errmap) > 0 {
 		if debug {
-			log.Printf("ObtainCertificate %v => %v", host, errmap)
+			log.L.Infof("ObtainCertificate %v => %v", host, errmap)
 		}
 		err = fmt.Errorf("%v", errmap)
 		return
@@ -686,7 +687,7 @@ func (m *Manager) verify(host string) (cert *tls.Certificate, refreshTime time.T
 	cert, err = entryCert.toTLS()
 	if err != nil {
 		if debug {
-			log.Printf("ObtainCertificate %v toTLS failure: %v", host, err)
+			log.L.Infof("ObtainCertificate %v toTLS failure: %v", host, err)
 		}
 		err = err
 		return
@@ -710,7 +711,7 @@ func certRefreshTime(cert *tls.Certificate) (time.Time, error) {
 	xc, err := x509.ParseCertificate(cert.Certificate[0])
 	if err != nil {
 		if debug {
-			log.Printf("ObtainCertificate to X.509 failure: %v", err)
+			log.L.Infof("ObtainCertificate to X.509 failure: %v", err)
 		}
 		return time.Time{}, err
 	}
