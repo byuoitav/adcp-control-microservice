@@ -3,6 +3,7 @@ package helpers
 import (
 	"fmt"
 	"net"
+	"sync"
 	"time"
 
 	"github.com/byuoitav/common/log"
@@ -15,6 +16,7 @@ const ttl = 20
 const pruneinterval = 10
 
 var connmap map[string]*Connection
+var connmapMu *sync.Mutex
 
 type Connection struct {
 	Conn              *net.TCPConn
@@ -38,6 +40,7 @@ type Response struct {
 
 func init() {
 	connmap = make(map[string]*Connection)
+	connmapMu = &sync.Mutex{}
 	go startGardener()
 }
 
@@ -71,11 +74,13 @@ func MakeRequest(req Request) Response {
 }
 
 func getPooledConnection(addr string) (*Connection, *nerr.E) {
+	connmapMu.Lock()
 	v, ok := connmap[addr]
 	if ok {
 		log.L.Debugf("Using saved connection for %v", addr)
 		return v, nil
 	}
+	connmapMu.Unlock()
 
 	return StartConnection(addr)
 }
@@ -103,7 +108,9 @@ func StartConnection(address string) (*Connection, *nerr.E) {
 
 	go StartMinder(conn)
 
+	connmapMu.Lock()
 	connmap[address] = conn
+	connmapMu.Unlock()
 
 	return conn, nil
 }
@@ -125,7 +132,9 @@ func StartMinder(conn *Connection) {
 		case <-conn.SeppukuChannel:
 			log.L.Debugf("Starting minder close for %v", conn.Address)
 			//remove yourself from the conn map, close your channel, empty it, and then close
+			connmapMu.Lock()
 			delete(connmap, conn.Address)
+			connmapMu.Unlock()
 			close(conn.InChannel)
 			for req := range conn.InChannel {
 				log.L.Debugf("Clearing (handling) request for: %v", conn.Address)
@@ -165,6 +174,7 @@ func startGardener() {
 		<-ticker.C
 
 		log.L.Debugf("Running gardener")
+		connmapMu.Lock()
 		for k, v := range connmap {
 			if time.Since(v.LastCommunication) > (time.Duration(ttl) * time.Second) {
 				log.L.Debugf("Pruning connection for %v. Last communication over the channel was %v", k, v.LastCommunication)
@@ -172,5 +182,6 @@ func startGardener() {
 				v.SeppukuChannel <- true
 			}
 		}
+		connmapMu.Unlock()
 	}
 }
