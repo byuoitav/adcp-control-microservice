@@ -78,6 +78,8 @@ func getPooledConnection(addr string) (*Connection, *nerr.E) {
 	v, ok := connmap[addr]
 	if ok {
 		log.L.Debugf("Using saved connection for %v", addr)
+		connmapMu.Unlock()
+
 		return v, nil
 	}
 	connmapMu.Unlock()
@@ -178,6 +180,7 @@ func startGardener() {
 		for k, v := range connmap {
 			if time.Since(v.LastCommunication) > (time.Duration(ttl) * time.Second) {
 				log.L.Debugf("Pruning connection for %v. Last communication over the channel was %v", k, v.LastCommunication)
+
 				// time to kill it
 				v.SeppukuChannel <- true
 			}
