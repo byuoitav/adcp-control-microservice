@@ -5,8 +5,7 @@ NAME=$(shell echo $(CIRCLE_PROJECT_REPONAME))
 
 ifeq ($(NAME),)
 NAME := $(shell basename "$(PWD)")
-endif
-
+endif 
 ifeq ($(ORG),)
 ORG=byuoitav
 endif
