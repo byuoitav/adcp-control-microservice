@@ -6,7 +6,6 @@ import (
 
 	"github.com/byuoitav/common/log"
 	"github.com/byuoitav/common/nerr"
-	"github.com/byuoitav/common/status"
 	"github.com/byuoitav/common/structs"
 )
 
@@ -42,20 +41,6 @@ func SetInput(address, port string, pooled bool) *nerr.E {
 
 	command := fmt.Sprintf("input \"%s\"", port)
 	return sendCommand(command, address, pooled)
-}
-
-func GetInputStatus(address string, pooled bool) (status.Input, *nerr.E) {
-	log.L.Debugf("Querying input status of %s", address)
-
-	response, err := queryState("input ?", address, pooled)
-	if err != nil {
-		return status.Input{}, err.Add("Couldn't query input status")
-	}
-
-	status := status.Input{
-		Input: strings.Trim(string(response), "\""),
-	}
-	return status, nil
 }
 
 // HasActiveSignal checks to see if the projector has an active signal on the given port currently.

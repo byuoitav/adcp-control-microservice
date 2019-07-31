@@ -125,66 +125,6 @@ func setInputPort(context echo.Context, pooled bool) error {
 	return context.JSON(http.StatusOK, se.Input{port})
 }
 
-func volumeLevel(context echo.Context, pooled bool) error {
-	address := context.Param("address")
-
-	level, err := helpers.GetVolumeLevel(address, pooled)
-	if err != nil {
-		log.L.Warnf(err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, level)
-}
-
-func muteStatus(context echo.Context, pooled bool) error {
-	address := context.Param("address")
-
-	status, err := helpers.GetMute(address, pooled)
-	if err != nil {
-		log.L.Warnf(err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, status)
-}
-
-func powerStatus(context echo.Context, pooled bool) error {
-	address := context.Param("address")
-
-	status, err := helpers.GetPower(address, pooled)
-	if err != nil {
-		log.L.Warnf(err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, status)
-}
-
-func blankedStatus(context echo.Context, pooled bool) error {
-	address := context.Param("address")
-
-	status, err := helpers.GetBlankStatus(address, pooled)
-	if err != nil {
-		log.L.Warnf(err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, status)
-}
-
-func inputStatus(context echo.Context, pooled bool) error {
-	address := context.Param("address")
-
-	status, err := helpers.GetInputStatus(address, pooled)
-	if err != nil {
-		log.L.Warnf(err.Error())
-		return context.JSON(http.StatusInternalServerError, err.Error())
-	}
-
-	return context.JSON(http.StatusOK, status)
-}
-
 func hasActiveSignal(context echo.Context, pooled bool) error {
 	address := context.Param("address")
 	port := context.Param("port")

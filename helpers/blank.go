@@ -2,12 +2,10 @@ package helpers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/byuoitav/common/log"
 
 	"github.com/byuoitav/common/nerr"
-	"github.com/byuoitav/common/status"
 )
 
 func SetBlank(address string, blank, pooled bool) *nerr.E {
@@ -21,24 +19,4 @@ func SetBlank(address string, blank, pooled bool) *nerr.E {
 	}
 
 	return sendCommand(command, address, pooled)
-}
-
-func GetBlankStatus(address string, pooled bool) (status.Blanked, *nerr.E) {
-	log.L.Infof("Querying blank status of %s", address)
-
-	response, err := queryState("blank ?", address, pooled)
-	if err != nil {
-		return status.Blanked{}, err
-	}
-
-	var status status.Blanked
-	resp := string(response)
-
-	if strings.Contains(resp, "on") {
-		status.Blanked = true
-	} else if strings.Contains(resp, "off") {
-		status.Blanked = false
-	}
-
-	return status, nil
 }

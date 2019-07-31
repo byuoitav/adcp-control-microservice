@@ -84,56 +84,6 @@ func SetInputPort(context echo.Context) error {
 	return setInputPort(context, false)
 }
 
-// VolumeLevelPooled gets the volume level when pooled
-func VolumeLevelPooled(context echo.Context) error {
-	return volumeLevel(context, true)
-}
-
-// VolumeLevel gets the volume level
-func VolumeLevel(context echo.Context) error {
-	return volumeLevel(context, false)
-}
-
-// MuteStatusPooled checks if the sound is muted when pooled
-func MuteStatusPooled(context echo.Context) error {
-	return muteStatus(context, true)
-}
-
-// MuteStatus checks if the sound is muted
-func MuteStatus(context echo.Context) error {
-	return muteStatus(context, false)
-}
-
-// PowerStatusPooled checks the power status when pooled
-func PowerStatusPooled(context echo.Context) error {
-	return powerStatus(context, true)
-}
-
-// PowerStatus checks the power status
-func PowerStatus(context echo.Context) error {
-	return powerStatus(context, false)
-}
-
-// BlankedStatusPooled checks if the display is blanked when pooled
-func BlankedStatusPooled(context echo.Context) error {
-	return blankedStatus(context, true)
-}
-
-// BlankedStatus checks if the display is blanked
-func BlankedStatus(context echo.Context) error {
-	return blankedStatus(context, false)
-}
-
-// InputStatusPooled checks what input the display is on when pooled
-func InputStatusPooled(context echo.Context) error {
-	return inputStatus(context, true)
-}
-
-// InputStatus checks what input the display is on
-func InputStatus(context echo.Context) error {
-	return inputStatus(context, false)
-}
-
 // HasActiveSignalPooled checks to see if the display has an active input when pooled
 func HasActiveSignalPooled(context echo.Context) error {
 	return hasActiveSignal(context, true)
