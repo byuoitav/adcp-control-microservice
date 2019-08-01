@@ -18,9 +18,8 @@ func main() {
 	read.GET("/:address/input", handlers.GetInput)
 	read.GET("/:address/muted", handlers.GetMuted)
 	read.GET("/:address/volume", handlers.GetVolume)
-
-	read.GET("/:address/activesignal/:port", handlers.SetVolume)
-	read.GET("/:address/hardware", handlers.SetVolume)
+	read.GET("/:address/hardware", handlers.GetHardwareInfo)
+	read.GET("/:address/activesignal", handlers.GetActiveSignal)
 
 	write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
 	write.GET("/:address/power/:state", handlers.SetPower)     // 'on' or 'standby'
@@ -28,14 +27,6 @@ func main() {
 	write.GET("/:address/input/:port", handlers.SetInput)      // one of the adcp ports
 	write.GET("/:address/muted/:state", handlers.SetMuted)     // 'mute' or 'unmute'
 	write.GET("/:address/volume/:level", handlers.SetVolume)   // 1-100
-
-	// write := router.Group("", auth.AuthorizeRequest("write-state", "room", auth.LookupResourceFromAddress))
-	// read := router.Group("", auth.AuthorizeRequest("read-state", "room", auth.LookupResourceFromAddress))
-
-	/*
-		read.GET("/:address/active/:port", handlers.HasActiveSignal)
-		read.GET("/:address/hardware", handlers.GetHardwareInfo)
-	*/
 
 	server := http.Server{
 		Addr:           port,

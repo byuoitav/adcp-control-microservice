@@ -77,3 +77,31 @@ func GetVolume(ectx echo.Context) error {
 
 	return ectx.JSON(http.StatusOK, resp)
 }
+
+// GetHardwareInfo .
+func GetHardwareInfo(ectx echo.Context) error {
+	address := ectx.Param("address")
+
+	resp, err := adcp.GetHardwareInfo(address)
+	if err != nil {
+		return ectx.JSON(http.StatusInternalServerError, status.Error{
+			Error: err.Error(),
+		})
+	}
+
+	return ectx.JSON(http.StatusOK, resp)
+}
+
+// GetActiveSignal .
+func GetActiveSignal(ectx echo.Context) error {
+	address := ectx.Param("address")
+
+	resp, err := adcp.GetActiveSignal(address)
+	if err != nil {
+		return ectx.JSON(http.StatusInternalServerError, status.Error{
+			Error: err.Error(),
+		})
+	}
+
+	return ectx.JSON(http.StatusOK, resp)
+}

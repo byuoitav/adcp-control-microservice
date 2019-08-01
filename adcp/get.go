@@ -1,6 +1,7 @@
 package adcp
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/byuoitav/common/pooled"
 	"github.com/byuoitav/common/status"
+	"github.com/byuoitav/common/structs"
 )
 
 // GetPower .
@@ -186,4 +188,167 @@ func GetVolume(address string) (status.Volume, error) {
 
 	volume.Volume = adcpToNormalVolume(volume.Volume)
 	return volume, nil
+}
+
+// GetHardwareInfo .
+func GetHardwareInfo(address string) (structs.HardwareInfo, error) {
+	var info structs.HardwareInfo
+
+	work := func(conn pooled.Conn) error {
+		conn.Log().Infof("Getting hardware info")
+
+		// model name
+		cmd := []byte("modelname ?\r\n")
+		resp, err := writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.ModelName = strings.Trim(resp, "\"")
+
+		// ip address
+		cmd = []byte("ipv4_ip_address ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.NetworkInfo.IPAddress = strings.Trim(resp, "\"")
+
+		// gateway
+		cmd = []byte("ipv4_default_gateway ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.NetworkInfo.Gateway = strings.Trim(resp, "\"")
+
+		// dns
+		cmd = []byte("ipv4_dns_server1 ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.NetworkInfo.DNS = append(info.NetworkInfo.DNS, strings.Trim(resp, "\""))
+
+		cmd = []byte("ipv4_dns_server2 ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.NetworkInfo.DNS = append(info.NetworkInfo.DNS, strings.Trim(resp, "\""))
+
+		// mac address
+		cmd = []byte("mac_address ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.NetworkInfo.MACAddress = strings.Trim(resp, "\"")
+
+		// serial number
+		cmd = []byte("serialnum ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.SerialNumber = strings.Trim(resp, "\"")
+
+		// filter status
+		cmd = []byte("filter_status ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.FilterStatus = strings.Trim(resp, "\"")
+
+		// power status
+		cmd = []byte("power_status ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		info.PowerStatus = strings.Trim(resp, "\"")
+
+		// warnings
+		cmd = []byte("warning ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		err = json.Unmarshal([]byte(resp), &info.WarningStatus)
+		if err != nil {
+			return err
+		}
+
+		// errors
+		cmd = []byte("error ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		err = json.Unmarshal([]byte(resp), &info.ErrorStatus)
+		if err != nil {
+			return err
+		}
+
+		// timer info
+		cmd = []byte("timer ?\r\n")
+		resp, err = writeAndRead(conn, cmd, 3*time.Second)
+		if err != nil {
+			return err
+		}
+
+		err = json.Unmarshal([]byte(resp), &info.TimerInfo)
+		if err != nil {
+			return err
+		}
+
+		conn.Log().Infof("Hardware info %+v", info)
+
+		return nil
+	}
+
+	err := pool.Do(address, work)
+	if err != nil {
+		return info, err
+	}
+
+	return info, nil
+}
+
+// GetActiveSignal .
+func GetActiveSignal(address string) (structs.ActiveSignal, error) {
+	var state structs.ActiveSignal
+
+	work := func(conn pooled.Conn) error {
+		conn.Log().Infof("Getting active signal")
+
+		cmd := []byte("signal ?\r\n")
+		resp, err := writeAndRead(conn, cmd, 5*time.Second)
+		if err != nil {
+			return err
+		}
+
+		conn.Log().Infof("Active signal is %s", resp)
+
+		state.Active = resp != `"Invalid"`
+		return nil
+	}
+
+	err := pool.Do(address, work)
+	if err != nil {
+		return state, err
+	}
+
+	return state, nil
 }
