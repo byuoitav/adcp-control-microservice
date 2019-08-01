@@ -12,39 +12,39 @@ import (
 
 // GetPower .
 func GetPower(address string) (status.Power, error) {
-	var status status.Power
+	var state status.Power
 
 	work := func(conn pooled.Conn) error {
-		conn.Log().Infof("Getting power status")
+		conn.Log().Infof("Getting power state")
 
-		cmd := []byte(fmt.Sprintf("power_status ?\n"))
+		cmd := []byte("power_status ?\r\n")
 		resp, err := writeAndRead(conn, cmd, 5*time.Second)
 		if err != nil {
 			return err
 		}
 
-		conn.Log().Infof("Power status is %s", resp)
+		conn.Log().Infof("Power state is %s", resp)
 
 		// this list comes from adcp documentation
 		switch resp {
 		case `"standby"`:
-			status.Power = "standby"
+			state.Power = "standby"
 		case `"startup"`:
-			status.Power = "on"
+			state.Power = "on"
 		case `"on"`:
-			status.Power = "on"
+			state.Power = "on"
 		case `"cooling1"`:
-			status.Power = "standby"
+			state.Power = "standby"
 		case `"cooling2"`:
-			status.Power = "standby"
+			state.Power = "standby"
 		case `"saving_cooling1"`:
-			status.Power = "standby"
+			state.Power = "standby"
 		case `"saving_cooling2"`:
-			status.Power = "standby"
+			state.Power = "standby"
 		case `"saving_standby"`:
-			status.Power = "standby"
+			state.Power = "standby"
 		default:
-			return fmt.Errorf("unknown power status '%s'", resp)
+			return fmt.Errorf("unknown power state '%s'", resp)
 		}
 
 		return nil
@@ -52,34 +52,34 @@ func GetPower(address string) (status.Power, error) {
 
 	err := pool.Do(address, work)
 	if err != nil {
-		return status, err
+		return state, err
 	}
 
-	return status, nil
+	return state, nil
 }
 
 // GetBlanked .
 func GetBlanked(address string) (status.Blanked, error) {
-	var status status.Blanked
+	var state status.Blanked
 
 	work := func(conn pooled.Conn) error {
-		conn.Log().Infof("Getting blanked status")
+		conn.Log().Infof("Getting blanked state")
 
-		cmd := []byte(fmt.Sprintf("blank ?\n"))
+		cmd := []byte("blank ?\r\n")
 		resp, err := writeAndRead(conn, cmd, 5*time.Second)
 		if err != nil {
 			return err
 		}
 
-		conn.Log().Infof("Blanked status is %s", resp)
+		conn.Log().Infof("Blanked state is %s", resp)
 
 		switch resp {
 		case `"on"`:
-			status.Blanked = true
+			state.Blanked = true
 		case `"off"`:
-			status.Blanked = false
+			state.Blanked = false
 		default:
-			return fmt.Errorf("unknown blanked status '%s'", resp)
+			return fmt.Errorf("unknown blanked state '%s'", resp)
 		}
 
 		return nil
@@ -87,10 +87,10 @@ func GetBlanked(address string) (status.Blanked, error) {
 
 	err := pool.Do(address, work)
 	if err != nil {
-		return status, err
+		return state, err
 	}
 
-	return status, nil
+	return state, nil
 }
 
 // GetInput .
@@ -100,7 +100,7 @@ func GetInput(address string) (status.Input, error) {
 	work := func(conn pooled.Conn) error {
 		conn.Log().Infof("Getting current input")
 
-		cmd := []byte(fmt.Sprintf("blank ?\n"))
+		cmd := []byte("input ?\r\n")
 		resp, err := writeAndRead(conn, cmd, 5*time.Second)
 		if err != nil {
 			return err
@@ -122,26 +122,26 @@ func GetInput(address string) (status.Input, error) {
 
 // GetMuted .
 func GetMuted(address string) (status.Mute, error) {
-	var status status.Mute
+	var state status.Mute
 
 	work := func(conn pooled.Conn) error {
-		conn.Log().Infof("Getting muted status")
+		conn.Log().Infof("Getting muted state")
 
-		cmd := []byte(fmt.Sprintf("muting ?\n"))
+		cmd := []byte("muting ?\r\n")
 		resp, err := writeAndRead(conn, cmd, 5*time.Second)
 		if err != nil {
 			return err
 		}
 
-		conn.Log().Infof("Muted status is %s", resp)
+		conn.Log().Infof("Muted state is %s", resp)
 
 		switch resp {
 		case `"on"`:
-			status.Muted = true
+			state.Muted = true
 		case `"off"`:
-			status.Muted = false
+			state.Muted = false
 		default:
-			return fmt.Errorf("unknown muted status '%s'", resp)
+			return fmt.Errorf("unknown muted state '%s'", resp)
 		}
 
 		return nil
@@ -149,20 +149,21 @@ func GetMuted(address string) (status.Mute, error) {
 
 	err := pool.Do(address, work)
 	if err != nil {
-		return status, err
+		return state, err
 	}
 
-	return status, nil
+	return state, nil
 }
 
 // GetVolume .
+// TODO some convert function?
 func GetVolume(address string) (status.Volume, error) {
 	var volume status.Volume
 
 	work := func(conn pooled.Conn) error {
 		conn.Log().Infof("Getting current volume")
 
-		cmd := []byte(fmt.Sprintf("volume ?\n"))
+		cmd := []byte("volume ?\r\n")
 		resp, err := writeAndRead(conn, cmd, 5*time.Second)
 		if err != nil {
 			return err
@@ -172,7 +173,6 @@ func GetVolume(address string) (status.Volume, error) {
 		if err != nil {
 			return err
 		}
-		// TODO some convert function?
 
 		conn.Log().Infof("Current volume is %d", vol)
 

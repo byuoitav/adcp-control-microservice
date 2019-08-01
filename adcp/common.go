@@ -29,7 +29,20 @@ func getConnection(key interface{}) (pooled.Conn, error) {
 		return nil, err
 	}
 
-	return pooled.Wrap(conn), nil
+	// read the NOKEY line
+	pconn := pooled.Wrap(conn)
+	b, err := pconn.ReadUntil(LF, 5*time.Second)
+	if err != nil {
+		conn.Close()
+		return nil, err
+	}
+
+	if strings.TrimSpace(string(b)) != "NOKEY" {
+		conn.Close()
+		return nil, fmt.Errorf("unexpected message when opening connection: %s", b)
+	}
+
+	return pconn, nil
 }
 
 func writeAndRead(conn pooled.Conn, cmd []byte, readTimeout time.Duration) (string, error) {

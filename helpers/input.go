@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/byuoitav/common/log"
@@ -24,6 +23,7 @@ var validADCPInputs = []string{
 	"option1",
 }
 
+/*
 func SetInput(address, port string, pooled bool) *nerr.E {
 	log.L.Debugf("Setting input on %s to %s", address, port)
 
@@ -42,6 +42,7 @@ func SetInput(address, port string, pooled bool) *nerr.E {
 	command := fmt.Sprintf("input \"%s\"", port)
 	return sendCommand(command, address, pooled)
 }
+*/
 
 // HasActiveSignal checks to see if the projector has an active signal on the given port currently.
 func HasActiveSignal(address string, port string, pooled bool) (structs.ActiveSignal, *nerr.E) {

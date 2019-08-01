@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/byuoitav/adcp-control-microservice/adcp"
+	"github.com/byuoitav/common/status"
 	"github.com/labstack/echo"
 )
 
@@ -11,58 +12,68 @@ import (
 func GetPower(ectx echo.Context) error {
 	address := ectx.Param("address")
 
-	status, err := adcp.GetPower(address)
+	resp, err := adcp.GetPower(address)
 	if err != nil {
-		return ectx.String(http.StatusInternalServerError, err.Error())
+		return ectx.JSON(http.StatusInternalServerError, status.Error{
+			Error: err.Error(),
+		})
 	}
 
-	return ectx.JSON(http.StatusOK, status)
+	return ectx.JSON(http.StatusOK, resp)
 }
 
 // GetBlanked .
 func GetBlanked(ectx echo.Context) error {
 	address := ectx.Param("address")
 
-	status, err := adcp.GetBlanked(address)
+	resp, err := adcp.GetBlanked(address)
 	if err != nil {
-		return ectx.String(http.StatusInternalServerError, err.Error())
+		return ectx.JSON(http.StatusInternalServerError, status.Error{
+			Error: err.Error(),
+		})
 	}
 
-	return ectx.JSON(http.StatusOK, status)
+	return ectx.JSON(http.StatusOK, resp)
 }
 
 // GetInput .
 func GetInput(ectx echo.Context) error {
 	address := ectx.Param("address")
 
-	status, err := adcp.GetInput(address)
+	resp, err := adcp.GetInput(address)
 	if err != nil {
-		return ectx.String(http.StatusInternalServerError, err.Error())
+		return ectx.JSON(http.StatusInternalServerError, status.Error{
+			Error: err.Error(),
+		})
 	}
 
-	return ectx.JSON(http.StatusOK, status)
+	return ectx.JSON(http.StatusOK, resp)
 }
 
 // GetMuted .
 func GetMuted(ectx echo.Context) error {
 	address := ectx.Param("address")
 
-	status, err := adcp.GetMuted(address)
+	resp, err := adcp.GetMuted(address)
 	if err != nil {
-		return ectx.String(http.StatusInternalServerError, err.Error())
+		return ectx.JSON(http.StatusInternalServerError, status.Error{
+			Error: err.Error(),
+		})
 	}
 
-	return ectx.JSON(http.StatusOK, status)
+	return ectx.JSON(http.StatusOK, resp)
 }
 
 // GetVolume .
 func GetVolume(ectx echo.Context) error {
 	address := ectx.Param("address")
 
-	status, err := adcp.GetVolume(address)
+	resp, err := adcp.GetVolume(address)
 	if err != nil {
-		return ectx.String(http.StatusInternalServerError, err.Error())
+		return ectx.JSON(http.StatusInternalServerError, status.Error{
+			Error: err.Error(),
+		})
 	}
 
-	return ectx.JSON(http.StatusOK, status)
+	return ectx.JSON(http.StatusOK, resp)
 }
