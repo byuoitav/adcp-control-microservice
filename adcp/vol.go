@@ -8,12 +8,14 @@ package adcp
 const (
 	minAdcp = 0
 	maxAdcp = 50
+
+	adcpConversion = 100 / maxAdcp
 )
 
 func normalToAdcpVolume(level int) int {
 	switch {
 	case level >= 0 && level <= 100:
-		return level / 2
+		return level / adcpConversion
 	case level < 0:
 		return minAdcp
 	case level > 100:
@@ -26,7 +28,7 @@ func normalToAdcpVolume(level int) int {
 func adcpToNormalVolume(level int) int {
 	switch {
 	case level >= minAdcp && level <= maxAdcp:
-		return level * 2
+		return level * adcpConversion
 	case level < minAdcp:
 		return minAdcp
 	case level > maxAdcp:
