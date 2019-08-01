@@ -142,8 +142,9 @@ func SetMuted(address string, state status.Mute) error {
 }
 
 // SetVolume .
-// TODO some convert func?
 func SetVolume(address string, volume status.Volume) error {
+	volume.Volume = normalToAdcpVolume(volume.Volume)
+
 	work := func(conn pooled.Conn) error {
 		conn.Log().Infof("Setting volume to %v", volume.Volume)
 

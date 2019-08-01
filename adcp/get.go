@@ -156,7 +156,6 @@ func GetMuted(address string) (status.Mute, error) {
 }
 
 // GetVolume .
-// TODO some convert function?
 func GetVolume(address string) (status.Volume, error) {
 	var volume status.Volume
 
@@ -185,5 +184,6 @@ func GetVolume(address string) (status.Volume, error) {
 		return volume, err
 	}
 
+	volume.Volume = adcpToNormalVolume(volume.Volume)
 	return volume, nil
 }
