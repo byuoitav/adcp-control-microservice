@@ -30,7 +30,7 @@ func SetPower(ectx echo.Context) error {
 func SetBlanked(ectx echo.Context) error {
 	address := ectx.Param("address")
 	state := status.Blanked{
-		Blanked: ectx.Param("state") == "true",
+		Blanked: ectx.Param("state") == "blank",
 	}
 
 	err := adcp.SetBlanked(address, state)
@@ -64,7 +64,7 @@ func SetInput(ectx echo.Context) error {
 func SetMuted(ectx echo.Context) error {
 	address := ectx.Param("address")
 	state := status.Mute{
-		Muted: ectx.Param("state") == "true",
+		Muted: ectx.Param("state") == "mute",
 	}
 
 	err := adcp.SetMuted(address, state)
