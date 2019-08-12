@@ -9,7 +9,7 @@ import (
 	"github.com/byuoitav/common/pooled"
 )
 
-var pool = pooled.NewMap(100*time.Second, 300*time.Millisecond, getConnection)
+var pool = pooled.NewMap(100*time.Second, 400*time.Millisecond, getConnection)
 
 const (
 	// CR is a carriage return
