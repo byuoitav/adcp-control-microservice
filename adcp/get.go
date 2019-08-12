@@ -341,7 +341,15 @@ func GetActiveSignal(address string) (structs.ActiveSignal, error) {
 
 		conn.Log().Infof("Active signal is %s", resp)
 
-		state.Active = resp != `"Invalid"`
+		switch resp {
+		case `"Invalid"`:
+			state.Active = false
+		case "ok":
+			state.Active = false
+		default:
+			state.Active = true
+		}
+
 		return nil
 	}
 
