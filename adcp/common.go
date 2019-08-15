@@ -9,7 +9,7 @@ import (
 	"github.com/byuoitav/common/pooled"
 )
 
-var pool = pooled.NewMap(100*time.Second, 400*time.Millisecond, getConnection)
+var pool = pooled.NewMap(45*time.Second, 400*time.Millisecond, getConnection)
 
 const (
 	// CR is a carriage return
@@ -45,7 +45,9 @@ func getConnection(key interface{}) (pooled.Conn, error) {
 	return pconn, nil
 }
 
-func writeAndRead(conn pooled.Conn, cmd []byte, readTimeout time.Duration) (string, error) {
+func writeAndRead(conn pooled.Conn, cmd []byte, timeout time.Duration) (string, error) {
+	conn.SetWriteDeadline(time.Now().Add(timeout))
+
 	n, err := conn.Write(cmd)
 	switch {
 	case err != nil:
@@ -54,7 +56,7 @@ func writeAndRead(conn pooled.Conn, cmd []byte, readTimeout time.Duration) (stri
 		return "", fmt.Errorf("wrote %v/%v bytes of command 0x%x", n, len(cmd), cmd)
 	}
 
-	b, err := conn.ReadUntil(LF, readTimeout)
+	b, err := conn.ReadUntil(LF, timeout)
 	if err != nil {
 		return "", err
 	}
