@@ -5,7 +5,7 @@ import re
 import json
 import argparse
 
-def getPort(): 
+def getPort():
     portre = re.compile(r'port := \"([\:\d]+)\"')
     #look for a server.go, if none, get a main.go, if none, return ""
     for f in os.listdir(os.getcwd()):
@@ -16,8 +16,8 @@ def getPort():
 
             res = portre.findall(txt)
             print(res)
-            if len(res) > 0: 
-                return res[0] 
+            if len(res) > 0:
+                return res[0]
     return ""
 
 parser = argparse.ArgumentParser(description='configure the config.json file')
@@ -68,13 +68,13 @@ for i in toCheck:
                 if args.loc:
                     print(r[4] , " - " , os.path.join(i,f))
                 envVars.add(r[4])
-        
+
 
 print(envVars)
 configPath = os.path.join(os.getcwd(), "config.json")
 
 if os.path.exists(configPath): #open the config file
-    try: 
+    try:
         fi = open(configPath, 'r')
         data = json.loads(fi.read())
         fi.close()
@@ -85,7 +85,7 @@ if os.path.exists(configPath): #open the config file
                 "port": getPort(),
                 "env-vars": sorted(list(envVars))
                 }
-        
+
     fi = open(configPath, 'w')
     fi.write(json.dumps(data, indent=4))
     fi.close()
@@ -99,4 +99,3 @@ else: #We need to build it
     fi = open(configPath, 'w')
     fi.write(json.dumps(data, indent=4))
     fi.close()
-
