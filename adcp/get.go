@@ -286,7 +286,10 @@ func GetHardwareInfo(address string) (structs.HardwareInfo, error) {
 
 		if resp[0] == '[' {
 			err = json.Unmarshal([]byte(resp), &info.WarningStatus)
+		} else {
+			info.WarningStatus = strings.Split(strings.Trim(resp, "\""), " ")
 		}
+
 		if err != nil {
 			return err
 		}
