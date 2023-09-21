@@ -1,6 +1,5 @@
 module github.com/byuoitav/adcp-control-microservice
 
-replace github.com/byuoitav/endpoint-authorization-controller => C:\Users\jamesp40\go\src\github.com\byuoitav\endpoint-authorization-controller
 
 go 1.21.1
 
